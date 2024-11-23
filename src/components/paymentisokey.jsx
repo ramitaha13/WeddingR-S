@@ -8,32 +8,6 @@ const PaymentIsOkay = () => {
   const [emailError, setEmailError] = useState(null);
   const bookingData = location.state || {};
 
-  useEffect(() => {
-    // Configure EmailJS once when component mounts
-    emailjs.init({
-      publicKey: "LGxW6QBt5TMuKxaej",
-    });
-
-    const confirmPayment = async () => {
-      try {
-        // Validate required data before sending email
-        if (!validateBookingData()) {
-          alert("الرجاء التأكد من اكتمال جميع بيانات الحجز");
-          return;
-        }
-
-        alert("تمت عملية الدفع بنجاح. شكراً لك!");
-        await sendConfirmationEmail();
-        await sendConfirmationEmail1();
-      } catch (error) {
-        console.error("Error in payment confirmation:", error);
-        alert("حدث خطأ أثناء معالجة الدفع.");
-      }
-    };
-
-    confirmPayment();
-  }, []);
-
   // Data validation function
   const validateBookingData = () => {
     const requiredFields = [
@@ -54,12 +28,8 @@ const PaymentIsOkay = () => {
 
   const sendConfirmationEmail = async () => {
     try {
-      // Sanitize the email address
-      const cleanedEmail = bookingData.email.trim().toLowerCase();
-
-      // Detailed template parameters
       const templateParams = {
-        to_email: cleanedEmail,
+        to_email: bookingData.email.trim().toLowerCase(),
         owner_email: bookingData.emailForOwner || "",
         user_name: bookingData.name || "عميل",
         hall_name: bookingData.hallName || "قاعة غير محددة",
@@ -69,10 +39,9 @@ const PaymentIsOkay = () => {
         phone: bookingData.phone || "غير محدد",
       };
 
-      // Send email with comprehensive error handling
       const response = await emailjs.send(
-        "service_jsdevfx", // Service ID
-        "template_0y89jsi", // Template ID
+        "service_jsdevfx",
+        "template_0y89jsi",
         templateParams,
       );
 
@@ -80,11 +49,8 @@ const PaymentIsOkay = () => {
       alert("تم إرسال بريد تأكيد الحجز بنجاح.");
     } catch (error) {
       console.error("Detailed email error:", error);
-
-      // Comprehensive error logging
       setEmailError(error);
 
-      // More detailed error messages
       if (error.status === 400) {
         alert("خطأ في إعدادات البريد الإلكتروني. يرجى مراجعة الإعدادات.");
       } else if (error.status === 401) {
@@ -97,10 +63,6 @@ const PaymentIsOkay = () => {
 
   const sendConfirmationEmail1 = async () => {
     try {
-      // Sanitize the email address
-      const cleanedEmail = bookingData.email.trim().toLowerCase();
-
-      // Detailed template parameters
       const templateParams = {
         owner_email: bookingData.emailForOwner || "",
         user_name: bookingData.name || "عميل",
@@ -109,10 +71,9 @@ const PaymentIsOkay = () => {
         phone: bookingData.phone || "غير محدد",
       };
 
-      // Send email with comprehensive error handling
       const response = await emailjs.send(
-        "service_jsdevfx", // Service ID
-        "template_uvruslb", // Template ID
+        "service_jsdevfx",
+        "template_uvruslb",
         templateParams,
       );
 
@@ -120,11 +81,8 @@ const PaymentIsOkay = () => {
       alert("تم إرسال بريد تأكيد الحجز بنجاح.");
     } catch (error) {
       console.error("Detailed email error:", error);
-
-      // Comprehensive error logging
       setEmailError(error);
 
-      // More detailed error messages
       if (error.status === 400) {
         alert("خطأ في إعدادات البريد الإلكتروني. يرجى مراجعة الإعدادات.");
       } else if (error.status === 401) {
@@ -134,6 +92,38 @@ const PaymentIsOkay = () => {
       }
     }
   };
+
+  useEffect(() => {
+    const confirmPayment = async () => {
+      emailjs.init({
+        publicKey: "LGxW6QBt5TMuKxaej",
+      });
+
+      try {
+        if (!validateBookingData()) {
+          alert("الرجاء التأكد من اكتمال جميع بيانات الحجز");
+          navigate("/"); // Using navigate to redirect on error
+          return;
+        }
+
+        alert("تمت عملية الدفع بنجاح. شكراً لك!");
+        await sendConfirmationEmail();
+        await sendConfirmationEmail1();
+      } catch (error) {
+        console.error("Error in payment confirmation:", error);
+        alert("حدث خطأ أثناء معالجة الدفع.");
+        navigate("/"); // Using navigate to redirect on error
+      }
+    };
+
+    confirmPayment();
+  }, [
+    bookingData,
+    navigate,
+    sendConfirmationEmail,
+    sendConfirmationEmail1,
+    validateBookingData,
+  ]); // Added missing dependencies
 
   return (
     <div dir="rtl" className="container mx-auto p-6">
@@ -166,7 +156,6 @@ const PaymentIsOkay = () => {
               <strong>البريد الإلكتروني:</strong> {bookingData.emailForOwner}
             </p>
 
-            {/* Debug information */}
             {emailError && (
               <div className="bg-red-100 p-4 mt-4 rounded">
                 <strong>تفاصيل الخطأ:</strong>

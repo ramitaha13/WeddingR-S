@@ -5,10 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 const SingersPage = () => {
   const navigate = useNavigate();
-  //const [selectedSinger, setSelectedSinger] = useState(null);
   const [singers, setSingers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedGenre, setSelectedGenre] = useState("all");
   const [selectedMenuItem, setSelectedMenuItem] = useState("المطربين");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -77,13 +75,7 @@ const SingersPage = () => {
   };
 
   const filteredSingers = singers.filter((singer) => {
-    const matchesSearch = singer.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesGenre =
-      selectedGenre === "all" ||
-      singer.genre.toLowerCase() === selectedGenre.toLowerCase();
-    return matchesSearch && matchesGenre;
+    return singer.name.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   const handleCheckDate = () => {

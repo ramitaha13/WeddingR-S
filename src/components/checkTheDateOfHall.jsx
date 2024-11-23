@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getDatabase, ref, get } from "firebase/database";
 import { Calendar, ChevronRight, Loader2 } from "lucide-react";
+import PropTypes from "prop-types"; // Import PropTypes
 
 const Alert = ({ variant, className, children }) => (
   <div
@@ -15,13 +16,27 @@ const Alert = ({ variant, className, children }) => (
   </div>
 );
 
+Alert.propTypes = {
+  variant: PropTypes.string.isRequired, // Added prop validation for 'variant'
+  className: PropTypes.string, // Added prop validation for 'className'
+  children: PropTypes.node.isRequired, // Added prop validation for 'children'
+};
+
 const AlertTitle = ({ children }) => (
   <h3 className="text-lg font-bold mb-2">{children}</h3>
 );
 
+AlertTitle.propTypes = {
+  children: PropTypes.node.isRequired, // Added prop validation for 'children'
+};
+
 const AlertDescription = ({ children }) => (
   <p className="text-sm">{children}</p>
 );
+
+AlertDescription.propTypes = {
+  children: PropTypes.node.isRequired, // Added prop validation for 'children'
+};
 
 const CheckTheDateOfHall = () => {
   const navigate = useNavigate();

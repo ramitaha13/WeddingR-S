@@ -7,6 +7,7 @@ import {
   remove,
   get,
   child,
+  onValue,
 } from "firebase/database";
 import { initializeApp } from "firebase/app";
 import {
@@ -234,10 +235,6 @@ const EditReservation = () => {
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-
-        // Get the date from orderId
-        const [date, ...rest] = orderId.split("-");
-        const formattedDate = `${date.padStart(4, "0")}-${rest.join("-")}`;
 
         // Delete from HallsBookings
         await remove(ref(db, `HallsBookings/${order.date}_${hallId}`));

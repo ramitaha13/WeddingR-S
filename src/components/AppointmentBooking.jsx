@@ -3,40 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { getDatabase, ref, set, get } from "firebase/database";
 
-const checkBookedDates = async (hallName, selectedDate) => {
-  const db = getDatabase();
-  const hallNameRef = ref(db, `HallNames/${hallName}/${selectedDate}`);
-  const snapshot = await get(hallNameRef);
-
-  if (snapshot.exists()) {
-    // Get all booked dates in the same month and year as the selected date
-    const bookedDates = await get(ref(db, `HallNames/${hallName}`));
-    const bookedDatesInSameMonthYear = Object.keys(bookedDates.val())
-      .filter((date) => {
-        const [year, month] = date.split("-");
-        const selectedYear = selectedDate.split("-")[0];
-        const selectedMonth = selectedDate.split("-")[1];
-        return year === selectedYear && month === selectedMonth;
-      })
-      .sort();
-
-    let bookedDatesMessage = "التواريخ المحجوزة في نفس الشهر والسنة هي:";
-    bookedDatesInSameMonthYear.forEach((date) => {
-      bookedDatesMessage += `\n- ${date}`;
-    });
-
-    return {
-      isBooked: true,
-      bookedDatesMessage,
-    };
-  } else {
-    return {
-      isBooked: false,
-      bookedDatesMessage: "",
-    };
-  }
-};
-
 const AppointmentBooking = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -57,6 +23,31 @@ const AppointmentBooking = () => {
 
   const [bookedDatesMessage, setBookedDatesMessage] = useState("");
 
+  const checkBookedDates = async (hallName, selectedDate) => {
+    const db = getDatabase();
+    const hallNameRef = ref(db, `HallNames/${hallName}/${selectedDate}`);
+    const snapshot = await get(hallNameRef);
+
+    if (snapshot.exists()) {
+      const bookedDates = await get(ref(db, `HallNames/${hallName}`));
+      const bookedDatesInSameMonthYear = Object.keys(bookedDates.val())
+        .filter((date) => {
+          const [year, month] = date.split("-");
+          const selectedYear = selectedDate.split("-")[0];
+          const selectedMonth = selectedDate.split("-")[1];
+          return year === selectedYear && month === selectedMonth;
+        })
+        .sort();
+
+      let message = "التواريخ المحجوزة في نفس الشهر والسنة هي:";
+      bookedDatesInSameMonthYear.forEach((date) => {
+        message += `\n- ${date}`;
+      });
+      return message;
+    }
+    return "";
+  };
+
   const handleChange = async (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -65,18 +56,14 @@ const AppointmentBooking = () => {
     }));
 
     if (name === "date") {
-      const { isBooked, bookedDatesMessage } = await checkBookedDates(
-        formData.hallName,
-        value,
-      );
-      setBookedDatesMessage(bookedDatesMessage);
+      const message = await checkBookedDates(formData.hallName, value);
+      setBookedDatesMessage(message);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate all required fields
     const requiredFields = [
       "name",
       "email",
@@ -93,25 +80,20 @@ const AppointmentBooking = () => {
       return;
     }
 
-    // Check if the selected date is already booked for the chosen hall
-    const { isBooked } = await checkBookedDates(
-      formData.hallName,
-      formData.date,
+    const db = getDatabase();
+    const hallNameRef = ref(
+      db,
+      `HallNames/${formData.hallName}/${formData.date}`,
     );
+    const snapshot = await get(hallNameRef);
 
-    if (isBooked) {
+    if (snapshot.exists()) {
       alert(
         `هذه القاعة محجوزة في هذا التاريخ، يرجى اختيار تاريخ آخر. ${bookedDatesMessage}`,
       );
       return;
     }
 
-    // Save the new booking to the HallNames node
-    const db = getDatabase();
-    const hallNameRef = ref(
-      db,
-      `HallNames/${formData.hallName}/${formData.date}`,
-    );
     try {
       await set(hallNameRef, {
         date: formData.date,
@@ -125,7 +107,6 @@ const AppointmentBooking = () => {
         notes: formData.notes,
       });
 
-      // Save the booking to the HallsBookings node
       const bookingRef = ref(
         db,
         `HallsBookings/${formData.date}_${formData.hallName}`,
@@ -133,10 +114,7 @@ const AppointmentBooking = () => {
       await set(bookingRef, formData);
 
       console.log("Reservation saved successfully!");
-
-      // Navigate to contact page with booking data
       navigate("/PaymentForm", { state: formData });
-      // navigate("/PaymentForm");
     } catch (error) {
       console.error("Error saving reservation:", error);
       alert(
@@ -145,7 +123,6 @@ const AppointmentBooking = () => {
     }
   };
 
-  // Event type options
   const eventTypes = [
     "سهرة عروس",
     "سهرة عريس",
@@ -156,7 +133,6 @@ const AppointmentBooking = () => {
     "سهره + عشاء",
   ];
 
-  // New number of guests options
   const guestOptions = [
     { label: "0 - 400", value: "0-400" },
     { label: "401 - 700", value: "401-700" },
@@ -164,7 +140,6 @@ const AppointmentBooking = () => {
     { label: "اكثر من 1000", value: "اكثر من-1000" },
   ];
 
-  // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split("T")[0];
 
   return (
@@ -288,7 +263,7 @@ const AppointmentBooking = () => {
                 onChange={handleChange}
                 className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500"
                 required
-                min={today} // Prevent selecting past dates
+                min={today}
               />
             </div>
 

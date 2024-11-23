@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { LogIn, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
 const LanguageSelector = ({ onLanguageChange, translations }) => {
   return (
@@ -21,6 +22,12 @@ const LanguageSelector = ({ onLanguageChange, translations }) => {
       </div>
     </div>
   );
+};
+
+LanguageSelector.propTypes = {
+  onLanguageChange: PropTypes.func.isRequired,
+  translations: PropTypes.objectOf(PropTypes.objectOf(PropTypes.string))
+    .isRequired,
 };
 
 const useTranslations = () => {
@@ -99,8 +106,7 @@ const HomePage = () => {
   const [selectedMenuItem, setSelectedMenuItem] = useState("home");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { t, currentLang, setCurrentLang, isRTL, translations } =
-    useTranslations();
+  const { t, setCurrentLang, isRTL, translations } = useTranslations();
 
   const images = [
     "/src/assets/rami.png",
@@ -217,7 +223,6 @@ const HomePage = () => {
         {/* Header */}
         <header className="h-24 bg-white shadow-lg flex items-center justify-between px-4 lg:px-8">
           <LanguageSelector
-            currentLang={currentLang}
             onLanguageChange={setCurrentLang}
             translations={translations}
           />

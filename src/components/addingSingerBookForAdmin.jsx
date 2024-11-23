@@ -135,7 +135,7 @@ const BookSingerAppointment = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedDate) {
-      setError("الرجاء اختيار التاريخ");
+      alert("الرجاء اختيار التاريخ");
       return;
     }
 
@@ -145,20 +145,18 @@ const BookSingerAppointment = () => {
     );
 
     if (bookedMessage) {
-      setError(`التاريخ محجوز، يرجى اختيار تاريخ آخر. ${bookedMessage}`);
       alert(`التاريخ محجوز في هذا الشهر والسنة. \n${bookedMessage}`);
       return;
     }
 
     setIsSubmitting(true);
-    setError(null);
 
     try {
       const bookingId = `${selectedDate}`;
       const bookingData = {
         ...formData,
         date: selectedDate,
-        emailOfOwner: singerEmail, // Add the singer's email to the booking data
+        emailOfOwner: singerEmail,
         createdAt: new Date().toISOString(),
       };
 
@@ -191,7 +189,7 @@ const BookSingerAppointment = () => {
       setBookedDatesMessage("");
     } catch (error) {
       console.error("Error saving booking:", error);
-      setError("حدث خطأ أثناء الحجز. يرجى المحاولة مرة أخرى.");
+      alert("حدث خطأ أثناء الحجز. يرجى المحاولة مرة أخرى.");
     } finally {
       setIsSubmitting(false);
     }

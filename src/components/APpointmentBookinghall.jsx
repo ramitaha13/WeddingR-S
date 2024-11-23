@@ -3,38 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { getDatabase, ref, set, get } from "firebase/database";
 
-const checkBookedDates = async (hallName, selectedDate) => {
-  const db = getDatabase();
-  const hallNameRef = ref(db, `HallNames/${hallName}/${selectedDate}`);
-  const snapshot = await get(hallNameRef);
-
-  if (snapshot.exists()) {
-    const bookedDates = await get(ref(db, `HallNames/${hallName}`));
-    const bookedDatesInSameMonthYear = Object.keys(bookedDates.val())
-      .filter((date) => {
-        const [year, month] = date.split("-");
-        const [selectedYear, selectedMonth] = selectedDate.split("-");
-        return year === selectedYear && month === selectedMonth;
-      })
-      .sort();
-
-    let bookedDatesMessage = "التواريخ المحجوزة في نفس الشهر والسنة هي:";
-    bookedDatesInSameMonthYear.forEach((date) => {
-      bookedDatesMessage += `\n- ${date}`;
-    });
-
-    return {
-      isBooked: true,
-      bookedDatesMessage,
-    };
-  } else {
-    return {
-      isBooked: false,
-      bookedDatesMessage: "",
-    };
-  }
-};
-
 const APpointmentBookinghall = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -49,12 +17,11 @@ const APpointmentBookinghall = () => {
     numberOfGuests: "",
     notes: "",
     eventType: "",
-    emailForOwner: "", // Changed from ownerEmail
+    emailForOwner: "",
   });
 
   const [bookedDatesMessage, setBookedDatesMessage] = useState("");
 
-  // Updated effect to fetch hall owner's email when hallName changes
   useEffect(() => {
     const fetchHallOwnerEmail = async () => {
       if (hallName) {
@@ -66,7 +33,7 @@ const APpointmentBookinghall = () => {
             const hallData = snapshot.val();
             setFormData((prev) => ({
               ...prev,
-              emailForOwner: hallData.email || "", // Changed from ownerEmail
+              emailForOwner: hallData.email || "",
             }));
           }
         } catch (error) {
@@ -78,6 +45,31 @@ const APpointmentBookinghall = () => {
     fetchHallOwnerEmail();
   }, [hallName]);
 
+  const checkBookedDates = async (hallName, selectedDate) => {
+    const db = getDatabase();
+    const hallNameRef = ref(db, `HallNames/${hallName}/${selectedDate}`);
+    const snapshot = await get(hallNameRef);
+
+    if (snapshot.exists()) {
+      const bookedDates = await get(ref(db, `HallNames/${hallName}`));
+      const bookedDatesInSameMonthYear = Object.keys(bookedDates.val())
+        .filter((date) => {
+          const [year, month] = date.split("-");
+          const [selectedYear, selectedMonth] = selectedDate.split("-");
+          return year === selectedYear && month === selectedMonth;
+        })
+        .sort();
+
+      let message = "التواريخ المحجوزة في نفس الشهر والسنة هي:";
+      bookedDatesInSameMonthYear.forEach((date) => {
+        message += `\n- ${date}`;
+      });
+
+      return message;
+    }
+    return "";
+  };
+
   const handleChange = async (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -86,11 +78,8 @@ const APpointmentBookinghall = () => {
     }));
 
     if (name === "date") {
-      const { isBooked, bookedDatesMessage } = await checkBookedDates(
-        formData.hallName,
-        value,
-      );
-      setBookedDatesMessage(bookedDatesMessage);
+      const message = await checkBookedDates(formData.hallName, value);
+      setBookedDatesMessage(message);
     }
   };
 
@@ -116,23 +105,20 @@ const APpointmentBookinghall = () => {
       return;
     }
 
-    const { isBooked } = await checkBookedDates(
-      formData.hallName,
-      formData.date,
+    const db = getDatabase();
+    const hallNameRef = ref(
+      db,
+      `HallNames/${formData.hallName}/${formData.date}`,
     );
+    const snapshot = await get(hallNameRef);
 
-    if (isBooked) {
+    if (snapshot.exists()) {
       alert(
         `هذه القاعة محجوزة في هذا التاريخ، يرجى اختيار تاريخ آخر. ${bookedDatesMessage}`,
       );
       return;
     }
 
-    const db = getDatabase();
-    const hallNameRef = ref(
-      db,
-      `HallNames/${formData.hallName}/${formData.date}`,
-    );
     try {
       await set(hallNameRef, {
         date: formData.date,
@@ -143,7 +129,7 @@ const APpointmentBookinghall = () => {
         numberOfGuests: formData.numberOfGuests,
         eventType: formData.eventType,
         notes: formData.notes,
-        emailForOwner: formData.emailForOwner, // Changed from ownerEmail
+        emailForOwner: formData.emailForOwner,
       });
 
       const bookingRef = ref(
@@ -153,7 +139,6 @@ const APpointmentBookinghall = () => {
       await set(bookingRef, formData);
 
       console.log("تم حفظ الحجز بنجاح!");
-
       navigate(`/Login/${formData.hallName}`);
     } catch (error) {
       console.error("خطأ في حفظ الحجز:", error);
@@ -244,7 +229,6 @@ const APpointmentBookinghall = () => {
               />
             </div>
 
-            {/* Updated input field for hall owner's email */}
             <div>
               <label className="block text-gray-700 font-medium mb-2">
                 البريد الإلكتروني لصاحب القاعة

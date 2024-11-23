@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getDatabase, ref, get } from "firebase/database";
 import { Calendar, ChevronRight, Loader2 } from "lucide-react";
+import PropTypes from "prop-types"; // Import PropTypes
 
 const Alert = ({ variant, className, children }) => (
   <div
@@ -15,13 +16,27 @@ const Alert = ({ variant, className, children }) => (
   </div>
 );
 
+Alert.propTypes = {
+  variant: PropTypes.string.isRequired, // Prop validation for 'variant'
+  className: PropTypes.string, // Prop validation for 'className'
+  children: PropTypes.node.isRequired, // Prop validation for 'children'
+};
+
 const AlertTitle = ({ children }) => (
   <h3 className="text-lg font-bold mb-2">{children}</h3>
 );
 
+AlertTitle.propTypes = {
+  children: PropTypes.node.isRequired, // Prop validation for 'children'
+};
+
 const AlertDescription = ({ children }) => (
   <p className="text-sm">{children}</p>
 );
+
+AlertDescription.propTypes = {
+  children: PropTypes.node.isRequired, // Prop validation for 'children'
+};
 
 const CheckTheDateOfSinger = () => {
   const navigate = useNavigate();
@@ -100,20 +115,17 @@ const CheckTheDateOfSinger = () => {
 
     try {
       const db = getDatabase();
-      // Check the SingerNames/singerName path
       const singerRef = ref(db, `SingerNames/${selectedSinger}`);
       const formattedDate = date.replace(/\//g, "-");
 
       const snapshot = await get(singerRef);
 
-      // Check if the specific date exists in Firebase
       const dateSnapshot = await get(
         ref(db, `SingerNames/${selectedSinger}/${formattedDate}`),
       );
       const isBooked = dateSnapshot.exists();
 
       if (snapshot.exists()) {
-        // Get monthly bookings if the singer exists
         const monthlyBookingsData = getMonthlyBookings(snapshot, formattedDate);
         setMonthlyBookings(monthlyBookingsData);
       }

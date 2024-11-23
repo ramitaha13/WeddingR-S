@@ -15,8 +15,6 @@ const DetailsPage = () => {
   const navigate = useNavigate();
   const { hallId } = useParams();
 
-  const [currentPage1, setCurrentPage1] = useState("details");
-
   const [filters, setFilters] = useState({
     date: "",
     name: "",
@@ -158,7 +156,6 @@ const DetailsPage = () => {
   );
 
   const handleNavigation = (page) => {
-    setCurrentPage1(page);
     if (page === "statistics") {
       navigate(`/statistics?hallId=${hallId}`);
     }

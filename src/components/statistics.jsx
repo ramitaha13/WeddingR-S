@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import * as XLSX from "xlsx";
 
@@ -71,7 +71,6 @@ const translations = {
 };
 
 const StatisticsPage = () => {
-  const [file, setFile] = useState(null);
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [availableYears, setAvailableYears] = useState([]);
@@ -81,8 +80,6 @@ const StatisticsPage = () => {
   const [language, setLanguage] = useState("ar"); // Default language is Arabic
   const rowsPerPage = 10;
   const navigate = useNavigate();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
 
   const t = translations[language]; // Current language translations
 
@@ -111,7 +108,6 @@ const StatisticsPage = () => {
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-    setFile(selectedFile);
 
     if (selectedFile) {
       const reader = new FileReader();
@@ -218,8 +214,7 @@ const StatisticsPage = () => {
               className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700"
             >
               <ArrowRight className="ml-2" size={20} />
-              {t.back || "Back"}{" "}
-              {/* Add translation for "back" in your translations object */}
+              {t.back}
             </button>
           </div>
           <div className="mb-6">

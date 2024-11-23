@@ -57,8 +57,7 @@ const AdminPage = () => {
     const unsubscribe = onValue(hallsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const hallsArray = Object.entries(data).map(([key, value]) => ({
-          id: key,
+        const hallsArray = Object.entries(data).map(([_, value]) => ({
           name: value.name,
           capacity: value.capacity,
           location: value.location,
@@ -81,7 +80,6 @@ const AdminPage = () => {
       const data = snapshot.val();
       if (data) {
         const singersArray = Object.entries(data).map(([key, value]) => ({
-          id: key,
           name: value.name || key,
           bookings: value.bookings || 0,
         }));
@@ -96,47 +94,60 @@ const AdminPage = () => {
     return () => unsubscribe();
   }, []);
 
-  const handleDeleteHall = async (hallId, hallName) => {
+  const handleDeleteHall = async (hallName) => {
     const isConfirmed = window.confirm(
       `هل أنت متأكد من حذف القاعة "${hallName}"؟`,
     );
 
     if (isConfirmed) {
       try {
-        const hallRef = ref(database, `halls/${hallId}`);
-        const hallSnapshot = await get(hallRef);
-        const hallData = hallSnapshot.val();
+        const hallsRef = ref(database, "halls");
+        const snapshot = await get(hallsRef);
+        const halls = snapshot.val();
 
-        if (hallData) {
-          await remove(hallRef);
-          const hallNameRef = ref(database, `HallNames/${hallData.name}`);
-          await remove(hallNameRef);
-        }
+        // Find and delete the hall by name
+        Object.entries(halls).forEach(async ([key, hall]) => {
+          if (hall.name === hallName) {
+            const hallRef = ref(database, `halls/${key}`);
+            await remove(hallRef);
+            const hallNameRef = ref(database, `HallNames/${hallName}`);
+            await remove(hallNameRef);
+          }
+        });
       } catch (error) {
         console.error("Error deleting hall:", error);
       }
     }
   };
 
-  const handleDeleteSinger = async (singerId, singerName) => {
+  const handleDeleteSinger = async (singerName) => {
     const isConfirmed = window.confirm(
       `هل أنت متأكد من حذف المطرب "${singerName}"؟`,
     );
 
     if (isConfirmed) {
       try {
-        const singerRef = ref(database, `Singer/${singerId}`);
-        await remove(singerRef);
-        const singerNameRef = ref(database, `SingerNames/${singerId}`);
-        await remove(singerNameRef);
+        const singersRef = ref(database, "Singer");
+        const snapshot = await get(singersRef);
+        const singers = snapshot.val();
+
+        // Find and delete the singer by name
+        Object.entries(singers).forEach(async ([key, singer]) => {
+          if (singer.name === singerName) {
+            const singerRef = ref(database, `Singer/${key}`);
+            await remove(singerRef);
+            const singerNameRef = ref(database, `SingerNames/${singerName}`);
+            await remove(singerNameRef);
+          }
+        });
       } catch (error) {
         console.error("Error deleting singer:", error);
       }
     }
   };
 
-  const handleCreateAccount = (id, name, type) => {
-    navigate("/newaccount", { state: { id, name, type } });
+  const handleCreateAccount = (name, type) => {
+    navigate("/newaccount", { state: { name, type } });
   };
 
   const handleLogout = () => {
@@ -152,14 +163,12 @@ const AdminPage = () => {
     navigate("/newSinger");
   };
 
-  // Replace the existing handleEditHall function in your AdminPage component with this:
-  const handleEditHall = (hallId) => {
-    navigate(`/admin/edit-hall/${hallId}`);
+  const handleEditHall = (hallName) => {
+    navigate(`/admin/edit-hall/${encodeURIComponent(hallName)}`);
   };
 
-  const handleEditSinger = (singerId) => {
-    // Add your edit singer logic here
-    navigate(`/admin/edit-singer/${singerId}`);
+  const handleEditSinger = (singerName) => {
+    navigate(`/admin/edit-singer/${encodeURIComponent(singerName)}`);
   };
 
   const filteredHalls = halls.filter((hall) =>
@@ -201,17 +210,15 @@ const AdminPage = () => {
   };
 
   const exportHalls = () => {
-    const hallsData = filteredHalls.map(({ id, ...rest }) => rest);
-    exportToExcel(hallsData, "Halls_Data");
+    exportToExcel(filteredHalls, "Halls_Data");
   };
 
   const exportSingers = () => {
-    const singersData = filteredSingers.map(({ id, ...rest }) => rest);
-    exportToExcel(singersData, "Singers_Data");
+    exportToExcel(filteredSingers, "Singers_Data");
   };
 
   const handleBack = () => {
-    navigate("/"); // العودة إلى صفحة الاتصال
+    navigate("/");
     localStorage.clear();
   };
 
@@ -376,7 +383,7 @@ const AdminPage = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {paginatedHalls.map((hall) => (
-                    <tr key={hall.id}>
+                    <tr key={hall.name}>
                       <td className="px-6 py-4 text-gray-800">{hall.name}</td>
                       <td className="px-6 py-4 text-gray-800">
                         {hall.capacity}
@@ -387,21 +394,19 @@ const AdminPage = () => {
                       <td className="px-6 py-4 flex items-center space-x-3">
                         <button
                           className="text-red-600 hover:text-red-800 ml-3"
-                          onClick={() => handleDeleteHall(hall.id, hall.name)}
+                          onClick={() => handleDeleteHall(hall.name)}
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>
                         <button
                           className="text-blue-600 hover:text-blue-800 ml-3"
-                          onClick={() => handleEditHall(hall.id)}
+                          onClick={() => handleEditHall(hall.name)}
                         >
                           <Edit className="w-5 h-5" />
                         </button>
                         <button
                           className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors duration-200 flex items-center"
-                          onClick={() =>
-                            handleCreateAccount(hall.id, hall.name, "hall")
-                          }
+                          onClick={() => handleCreateAccount(hall.name, "hall")}
                         >
                           <UserPlus className="w-4 h-4 ml-1" />
                           انشاء حساب
@@ -491,31 +496,25 @@ const AdminPage = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {paginatedSingers.map((singer) => (
-                    <tr key={singer.id}>
+                    <tr key={singer.name}>
                       <td className="px-6 py-4 text-gray-800">{singer.name}</td>
                       <td className="px-6 py-4 flex items-center space-x-3">
                         <button
                           className="text-red-600 hover:text-red-800 ml-3"
-                          onClick={() =>
-                            handleDeleteSinger(singer.id, singer.name)
-                          }
+                          onClick={() => handleDeleteSinger(singer.name)}
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>
                         <button
                           className="text-blue-600 hover:text-blue-800 ml-3"
-                          onClick={() => handleEditSinger(singer.id)}
+                          onClick={() => handleEditSinger(singer.name)}
                         >
                           <Edit className="w-5 h-5" />
                         </button>
                         <button
                           className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors duration-200 flex items-center"
                           onClick={() =>
-                            handleCreateAccount(
-                              singer.id,
-                              singer.name,
-                              "singer",
-                            )
+                            handleCreateAccount(singer.name, "singer")
                           }
                         >
                           <UserPlus className="w-4 h-4 ml-1" />

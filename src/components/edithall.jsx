@@ -50,8 +50,6 @@ const EditHall = () => {
 
         if (snapshot.exists()) {
           const hallData = snapshot.val();
-          setOriginalName(hallData.name);
-
           setFormData({
             name: hallData.name || "",
             capacity: hallData.capacity || "",
@@ -95,7 +93,6 @@ const EditHall = () => {
     setError(null);
 
     try {
-      // Generate the new key based on the hall name
       const newHallKey = formData.name.toLowerCase().replace(/\s+/g, " ");
 
       const hallData = {
@@ -114,12 +111,10 @@ const EditHall = () => {
         updatedAt: new Date().toISOString(),
       };
 
-      // If the name has changed, we need to create new record and delete old one
       if (newHallKey !== hallId) {
         await set(dbRef(db, `halls/${newHallKey}`), hallData);
         await remove(dbRef(db, `halls/${hallId}`));
       } else {
-        // Just update existing record
         await set(dbRef(db, `halls/${hallId}`), hallData);
       }
 
