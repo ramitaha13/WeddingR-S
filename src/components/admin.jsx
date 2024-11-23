@@ -57,7 +57,8 @@ const AdminPage = () => {
     const unsubscribe = onValue(hallsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const hallsArray = Object.entries(data).map(([_, value]) => ({
+        const hallsArray = Object.entries(data).map(([id, value]) => ({
+          id,
           name: value.name,
           capacity: value.capacity,
           location: value.location,
@@ -80,6 +81,7 @@ const AdminPage = () => {
       const data = snapshot.val();
       if (data) {
         const singersArray = Object.entries(data).map(([key, value]) => ({
+          id: key,
           name: value.name || key,
           bookings: value.bookings || 0,
         }));
@@ -383,7 +385,7 @@ const AdminPage = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {paginatedHalls.map((hall) => (
-                    <tr key={hall.name}>
+                    <tr key={hall.id}>
                       <td className="px-6 py-4 text-gray-800">{hall.name}</td>
                       <td className="px-6 py-4 text-gray-800">
                         {hall.capacity}
@@ -496,7 +498,7 @@ const AdminPage = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {paginatedSingers.map((singer) => (
-                    <tr key={singer.name}>
+                    <tr key={singer.id}>
                       <td className="px-6 py-4 text-gray-800">{singer.name}</td>
                       <td className="px-6 py-4 flex items-center space-x-3">
                         <button
