@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Search, ArrowRight, Trash2, Users, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getDatabase, ref, onValue, remove } from "firebase/database";

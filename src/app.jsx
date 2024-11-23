@@ -1,6 +1,4 @@
-import React from "react";
-import MainLayout from "./layouts/mainLayout";
-import UploadImage from "./UploadImage";
+// import React from "react";
 
 //export default function App() {
 // const App = () => {

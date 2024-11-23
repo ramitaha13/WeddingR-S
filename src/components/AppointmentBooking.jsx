@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { getDatabase, ref, set, get } from "firebase/database";
@@ -13,7 +13,7 @@ const checkBookedDates = async (hallName, selectedDate) => {
     const bookedDates = await get(ref(db, `HallNames/${hallName}`));
     const bookedDatesInSameMonthYear = Object.keys(bookedDates.val())
       .filter((date) => {
-        const [year, month, day] = date.split("-");
+        const [year, month] = date.split("-");
         const selectedYear = selectedDate.split("-")[0];
         const selectedMonth = selectedDate.split("-")[1];
         return year === selectedYear && month === selectedMonth;
