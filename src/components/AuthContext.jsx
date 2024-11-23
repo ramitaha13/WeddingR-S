@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
+import PropTypes from "prop-types";
 
 // إنشاء سياق
 const AuthContext = createContext();
@@ -10,6 +11,9 @@ export const AuthProvider = ({ children }) => {
   // دوال لتسجيل الدخول والخروج
   const login = () => setIsLoggedIn(true);
   const logout = () => setIsLoggedIn(false);
+  AuthProvider.propTypes = {
+    children: PropTypes.node, // Define children as a node, which can be any valid React child (string, number, element, etc.)
+  };
 
   return (
     <AuthContext.Provider value={{ isLoggedIn, login, logout }}>

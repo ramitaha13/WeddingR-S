@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ArrowRight, Mic, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { initializeApp } from "firebase/app";
@@ -45,14 +45,14 @@ const NewSinger = () => {
     }));
   };
 
-  const handleSpecialtiesChange = (e) => {
-    const { value } = e.target;
-    const specialties = value.split(",").map((specialty) => specialty.trim());
-    setFormData((prev) => ({
-      ...prev,
-      specialties,
-    }));
-  };
+  // const handleSpecialtiesChange = (e) => {
+  //   const { value } = e.target;
+  //   const specialties = value.split(",").map((specialty) => specialty.trim());
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     specialties,
+  //   }));
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();

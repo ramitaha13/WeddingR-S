@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { LogIn, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const LanguageSelector = ({ currentLang, onLanguageChange, translations }) => {
+const LanguageSelector = ({ onLanguageChange, translations }) => {
   return (
     <div className="relative group">
       <button className="flex items-center gap-2 text-pink-600 hover:text-pink-700 transition-colors">
         <Globe className="w-5 h-5" />
-        <span className="uppercase">{currentLang}</span>
       </button>
       <div className="absolute top-full right-0 mt-2 bg-white shadow-lg rounded-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
         {Object.keys(translations).map((lang) => (

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Users, Phone, MapPin, LogIn, Calendar, Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Users, MapPin, LogIn, Calendar, Search } from "lucide-react";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { useNavigate } from "react-router-dom";
 

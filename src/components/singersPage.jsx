@@ -1,20 +1,11 @@
-import React, { useState, useEffect } from "react";
-import {
-  Users,
-  Phone,
-  MapPin,
-  LogIn,
-  Calendar,
-  Search,
-  Music,
-  Star,
-} from "lucide-react";
+import { useState, useEffect } from "react";
+import { LogIn, Search } from "lucide-react";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { useNavigate } from "react-router-dom";
 
 const SingersPage = () => {
   const navigate = useNavigate();
-  const [selectedSinger, setSelectedSinger] = useState(null);
+  //const [selectedSinger, setSelectedSinger] = useState(null);
   const [singers, setSingers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("all");

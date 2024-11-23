@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getDatabase, ref, get } from "firebase/database";
 import { Calendar, ChevronRight, Loader2 } from "lucide-react";

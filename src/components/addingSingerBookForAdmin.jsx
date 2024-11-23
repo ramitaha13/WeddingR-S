@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ArrowRight, Calendar as CalendarIcon } from "lucide-react";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set, get, onValue } from "firebase/database";
@@ -13,7 +13,6 @@ const db = getDatabase(app);
 
 const BookSingerAppointment = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [bookedDatesMessage, setBookedDatesMessage] = useState("");
   const [singers, setSingers] = useState([]);

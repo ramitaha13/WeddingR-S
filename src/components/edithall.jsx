@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ArrowRight, Building2, AlertCircle } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { initializeApp } from "firebase/app";
@@ -17,7 +17,6 @@ const EditHall = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
-  const [originalName, setOriginalName] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {

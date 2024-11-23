@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 
@@ -23,8 +23,8 @@ const PaymentIsOkay = () => {
         }
 
         alert("تمت عملية الدفع بنجاح. شكراً لك!");
-        //await sendConfirmationEmail();
-        // await sendConfirmationEmail1();
+        await sendConfirmationEmail();
+        await sendConfirmationEmail1();
       } catch (error) {
         console.error("Error in payment confirmation:", error);
         alert("حدث خطأ أثناء معالجة الدفع.");

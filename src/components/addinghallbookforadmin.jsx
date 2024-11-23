@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
 import { getDatabase, ref, set, get, onValue } from "firebase/database";
 import emailjs from "@emailjs/browser";

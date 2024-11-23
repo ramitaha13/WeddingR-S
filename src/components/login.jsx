@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { LogIn, User, Lock, ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight } from "lucide-react";
 
 const translations = {
   ar: {

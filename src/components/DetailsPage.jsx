@@ -1,21 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue } from "firebase/database";
-import {
-  Calendar,
-  Users,
-  Building2,
-  LogOut,
-  Loader2,
-  Music,
-  Clock,
-  Star,
-  Search,
-  Download,
-} from "lucide-react";
+import { Calendar, LogOut, Loader2, Clock, Star, Download } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import * as XLSX from "xlsx";
-import { filter } from "lodash";
 
 const DetailsPage = () => {
   const [data, setData] = useState(null);
@@ -26,7 +14,7 @@ const DetailsPage = () => {
   const [hallOrders, setHallOrders] = useState([]);
   const navigate = useNavigate();
   const { hallId } = useParams();
-  const [showOnlyOldReservations, setShowOnlyOldReservations] = useState(false);
+
   const [currentPage1, setCurrentPage1] = useState("details");
 
   const [filters, setFilters] = useState({

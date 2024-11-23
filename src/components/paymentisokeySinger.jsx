@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 
 const PaymentIsOkay = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const [emailError, setEmailError] = useState(null);
   const bookingData = location.state || {};

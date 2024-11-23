@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Building2,
   Plus,
   Trash2,
   Calendar,
   Users,
-  DollarSign,
   LogOut,
   Search,
   Mic,

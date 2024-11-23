@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ArrowRight, Building2, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { initializeApp } from "firebase/app";

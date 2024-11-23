@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import * as XLSX from "xlsx";
@@ -83,7 +83,6 @@ const StatisticsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const hallId = queryParams.get("hallId");
 
   const t = translations[language]; // Current language translations
 

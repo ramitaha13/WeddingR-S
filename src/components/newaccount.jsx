@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Changed this import
 import { getDatabase, ref, set } from "firebase/database";
 import {
