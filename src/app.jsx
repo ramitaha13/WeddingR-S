@@ -1,14 +1,13 @@
-// import React from "react";
-// import MainLayout from "./layouts/mainLayout";
-// import UploadImage from "./UploadImage";
+import React from "react";
 
-// export default function App() {
-// const App = () => {
-//  return (
-//   <div>
+import Home from "./components/home";
 
-//   </div>
-//  );
-// };
-// return <MainLayout />;
-// }
+function App() {
+  return (
+    <div>
+      <Home />
+    </div>
+  );
+}
+
+export default App;
