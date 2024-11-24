@@ -347,7 +347,7 @@ const HomePage = () => {
                     href="mailto:taharami14@gmail.com"
                     className="text-lg lg:text-xl text-pink-600 hover:text-pink-700 transition-colors"
                   >
-                    taharami14@gmail.com
+                    wedding.rs196@gmail.com
                   </a>
                 </div>
               </div>
