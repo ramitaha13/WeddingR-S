@@ -344,7 +344,7 @@ const HomePage = () => {
                 <div className="flex items-center justify-center gap-3">
                   <span className="text-xl lg:text-2xl">📧</span>
                   <a
-                    href="mailto:taharami14@gmail.com"
+                    href="mailto:wedding.rs196@gmail.com"
                     className="text-lg lg:text-xl text-pink-600 hover:text-pink-700 transition-colors"
                   >
                     wedding.rs196@gmail.com
