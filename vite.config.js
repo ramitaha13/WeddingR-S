@@ -16,7 +16,7 @@ export default defineConfig({
   base: "/",
   resolve: {
     alias: {
-      "@": "/src", // This helps with imports if you use @ aliases
+      "@": "/src",
     },
   },
   server: {
