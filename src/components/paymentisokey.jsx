@@ -156,52 +156,6 @@ const PaymentIsOkay = () => {
 
     processPayment();
   }, []); // Dependencies handled inside the effect
-
-  return (
-    <div dir="rtl" className="container mx-auto p-6">
-      <div className="bg-white shadow-md rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4">تفاصيل الحجز</h2>
-        {bookingData ? (
-          <div className="space-y-2">
-            <p>
-              <strong>اسم العميل:</strong> {bookingData.name}
-            </p>
-            <p>
-              <strong>اسم القاعة:</strong> {bookingData.hallName}
-            </p>
-            <p>
-              <strong>نوع المناسبة:</strong> {bookingData.eventType}
-            </p>
-            <p>
-              <strong>تاريخ المناسبة:</strong> {bookingData.date}
-            </p>
-            <p>
-              <strong>عدد الضيوف:</strong> {bookingData.numberOfGuests}
-            </p>
-            <p>
-              <strong>رقم الهاتف:</strong> {bookingData.phone}
-            </p>
-            <p>
-              <strong>البريد الإلكتروني:</strong> {bookingData.email}
-            </p>
-            <p>
-              <strong>البريد الإلكتروني للقاعة:</strong>{" "}
-              {bookingData.emailForOwner}
-            </p>
-
-            {emailError && (
-              <div className="bg-red-100 p-4 mt-4 rounded">
-                <strong>تفاصيل الخطأ:</strong>
-                <pre>{JSON.stringify(emailError, null, 2)}</pre>
-              </div>
-            )}
-          </div>
-        ) : (
-          <p>لا توجد تفاصيل حجز متاحة</p>
-        )}
-      </div>
-    </div>
-  );
 };
 
 export default PaymentIsOkay;
