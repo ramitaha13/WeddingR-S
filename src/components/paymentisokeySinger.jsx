@@ -1,13 +1,24 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import emailjs from "@emailjs/browser";
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, set } from "firebase/database";
+
+// Firebase configuration
+const firebaseConfig = {
+  databaseURL: "https://booking-appointments-4c1b0-default-rtdb.firebaseio.com",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 const PaymentIsOkay = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const [emailError, setEmailError] = useState(null);
+  const [saveError, setSaveError] = useState(null);
   const bookingData = location.state || {};
 
-  // Move these functions inside useEffect to properly handle dependencies
   const validateBookingData = () => {
     const requiredFields = [
       "name",
@@ -22,6 +33,37 @@ const PaymentIsOkay = () => {
     return requiredFields.every(
       (field) => bookingData[field] && bookingData[field].trim() !== "",
     );
+  };
+
+  const saveToFirebase = async () => {
+    try {
+      const bookingId = `${bookingData.date}`;
+
+      // Save to SingerBookings
+      const bookingRef = ref(
+        db,
+        `SingerBookings/${bookingId}_${bookingData.singerPreference}`,
+      );
+
+      const bookingDataWithTimestamp = {
+        ...bookingData,
+        createdAt: new Date().toISOString(),
+        paymentStatus: "completed",
+      };
+
+      await set(bookingRef, bookingDataWithTimestamp);
+
+      // Save to SingerNames
+      const singerBookingRef = ref(
+        db,
+        `SingerNames/${bookingData.singerPreference}/${bookingId}`,
+      );
+      await set(singerBookingRef, bookingDataWithTimestamp);
+    } catch (error) {
+      console.error("Error saving to Firebase:", error);
+      setSaveError(error);
+      throw error;
+    }
   };
 
   const sendConfirmationEmail = async () => {
@@ -44,30 +86,22 @@ const PaymentIsOkay = () => {
         templateParams,
       );
 
-      console.log("Full email response:", response);
-      alert("تم إرسال بريد تأكيد الحجز بنجاح.");
+      console.log("Customer email response:", response);
     } catch (error) {
-      console.error("Detailed email error:", error);
+      console.error("Customer email error:", error);
       setEmailError(error);
-
-      if (error.status === 400) {
-        alert("خطأ في إعدادات البريد الإلكتروني. يرجى مراجعة الإعدادات.");
-      } else if (error.status === 401) {
-        alert("مشكلة في المصادقة. تحقق من مفاتيح API الخاصة بك.");
-      } else {
-        alert(`خطأ في إرسال البريد: ${error.text || "خطأ غير معروف"}`);
-      }
+      throw error;
     }
   };
 
-  const sendConfirmationEmail1 = async () => {
+  const sendOwnerConfirmationEmail = async () => {
     try {
       const templateParams = {
         owner_email: bookingData.emailOfOwner || "",
         user_name: bookingData.name || "عميل",
-        hall_name: bookingData.hallName || "قاعة غير محددة",
+        hall_name: bookingData.singerPreference || "قاعة غير محددة",
         event_date: bookingData.date || "تاريخ غير محدد",
-        phone: bookingData.phone || "غير محدد",
+        phone: bookingData.phoneNumber || "غير محدد",
       };
 
       const response = await emailjs.send(
@@ -76,19 +110,11 @@ const PaymentIsOkay = () => {
         templateParams,
       );
 
-      console.log("Full email response:", response);
-      alert("تم إرسال بريد تأكيد الحجز بنجاح.");
+      console.log("Owner email response:", response);
     } catch (error) {
-      console.error("Detailed email error:", error);
+      console.error("Owner email error:", error);
       setEmailError(error);
-
-      if (error.status === 400) {
-        alert("خطأ في إعدادات البريد الإلكتروني. يرجى مراجعة الإعدادات.");
-      } else if (error.status === 401) {
-        alert("مشكلة في المصادقة. تحقق من مفاتيح API الخاصة بك.");
-      } else {
-        alert(`خطأ في إرسال البريد: ${error.text || "خطأ غير معروف"}`);
-      }
+      throw error;
     }
   };
 
@@ -97,66 +123,38 @@ const PaymentIsOkay = () => {
       publicKey: "LGxW6QBt5TMuKxaej",
     });
 
-    const confirmPayment = async () => {
+    const processPayment = async () => {
       try {
         if (!validateBookingData()) {
           alert("الرجاء التأكد من اكتمال جميع بيانات الحجز");
           return;
         }
 
-        alert("تمت عملية الدفع بنجاح. شكراً لك!");
+        // First save to Firebase
+        await saveToFirebase();
+
+        // Then send confirmation emails
         await sendConfirmationEmail();
-        await sendConfirmationEmail1();
+        await sendOwnerConfirmationEmail();
+
+        alert("تمت عملية الدفع والحجز بنجاح. تم إرسال رسائل التأكيد!");
       } catch (error) {
-        console.error("Error in payment confirmation:", error);
-        alert("حدث خطأ أثناء معالجة الدفع.");
+        console.error("Error in payment process:", error);
+
+        if (error.status === 400) {
+          alert("خطأ في إعدادات البريد الإلكتروني. يرجى مراجعة الإعدادات.");
+        } else if (error.status === 401) {
+          alert("مشكلة في المصادقة. تحقق من مفاتيح API الخاصة بك.");
+        } else {
+          alert("حدث خطأ أثناء معالجة الدفع والحجز. يرجى المحاولة مرة أخرى.");
+        }
       }
+
+      navigate("/");
     };
 
-    confirmPayment();
-  }, [bookingData]); // Added bookingData as a dependency since it's used in the functions
-
-  return (
-    <div dir="rtl" className="container mx-auto p-6">
-      <div className="bg-white shadow-md rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4">تفاصيل الحجز</h2>
-        {bookingData ? (
-          <div className="space-y-2">
-            <p>
-              <strong>اسم العميل:</strong> {bookingData.name}
-            </p>
-            <p>
-              <strong>اسم المطرب:</strong> {bookingData.singerPreference}
-            </p>
-            <p>
-              <strong>نوع المناسبة:</strong> {bookingData.occasion}
-            </p>
-            <p>
-              <strong>تاريخ المناسبة:</strong> {bookingData.date}
-            </p>
-            <p>
-              <strong>رقم الهاتف:</strong> {bookingData.phoneNumber}
-            </p>
-            <p>
-              <strong>البريد الإلكتروني:</strong> {bookingData.email}
-            </p>
-            <p>
-              <strong>البريد الإلكتروني:</strong> {bookingData.emailOfOwner}
-            </p>
-
-            {emailError && (
-              <div className="bg-red-100 p-4 mt-4 rounded">
-                <strong>تفاصيل الخطأ:</strong>
-                <pre>{JSON.stringify(emailError, null, 2)}</pre>
-              </div>
-            )}
-          </div>
-        ) : (
-          <p>لا توجد تفاصيل حجز متاحة</p>
-        )}
-      </div>
-    </div>
-  );
+    processPayment();
+  }, [bookingData]);
 };
 
 export default PaymentIsOkay;

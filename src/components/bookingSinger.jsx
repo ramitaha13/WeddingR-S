@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowRight, Calendar as CalendarIcon } from "lucide-react";
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set, get } from "firebase/database";
+import { getDatabase, ref, get } from "firebase/database";
 
 const firebaseConfig = {
   databaseURL: "https://booking-appointments-4c1b0-default-rtdb.firebaseio.com",
@@ -34,9 +34,9 @@ const checkBookedDates = async (singerPreference, selectedDate) => {
       bookedDatesMessage += `\n- ${date}`;
     });
 
-    return bookedDatesMessage;
+    return { isBooked: true, message: bookedDatesMessage };
   } else {
-    return "";
+    return { isBooked: false, message: "" };
   }
 };
 
@@ -84,53 +84,31 @@ const BookSingerAppointment = () => {
       return;
     }
 
-    const bookedDatesMessage = await checkBookedDates(
-      formData.singerPreference,
-      formData.date,
-    );
-
-    if (bookedDatesMessage) {
-      alert(`التاريخ محجوز في هذا الشهر والسنة. \n${bookedDatesMessage}`);
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
-      const bookingId = `${formData.date}`;
+      // Check if the date is booked
+      const dateCheck = await checkBookedDates(
+        formData.singerPreference,
+        formData.date,
+      );
 
+      if (dateCheck.isBooked) {
+        alert(`التاريخ محجوز في هذا الشهر والسنة. \n${dateCheck.message}`);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // If date is available, proceed to payment page
       const bookingData = {
         ...formData,
         createdAt: new Date().toISOString(),
       };
 
-      const bookingRef = ref(
-        db,
-        `SingerBookings/${bookingId}_${formData.singerPreference}`,
-      );
-      await set(bookingRef, bookingData);
-
-      const singerBookingRef = ref(
-        db,
-        `SingerNames/${formData.singerPreference}/${bookingId}`,
-      );
-      await set(singerBookingRef, bookingData);
-
-      setFormData({
-        name: "",
-        phoneNumber: "",
-        email: "",
-        emailOfOwner: "",
-        date: "",
-        singerPreference: "",
-        occasion: "",
-        specialRequirements: "",
-      });
-
-      navigate("/PaymentForSinger", { state: formData });
+      navigate("/PaymentForSinger", { state: bookingData });
     } catch (error) {
-      console.error("Error saving booking:", error);
-      alert("حدث خطأ أثناء الحجز. يرجى المحاولة مرة أخرى.");
+      console.error("Error checking date:", error);
+      alert("حدث خطأ أثناء التحقق من التاريخ. يرجى المحاولة مرة أخرى.");
     } finally {
       setIsSubmitting(false);
     }
@@ -154,6 +132,7 @@ const BookSingerAppointment = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Rest of the form JSX remains exactly the same */}
             <div className="bg-gray-50 p-4 rounded-lg">
               <h2 className="text-lg font-semibold mb-4 text-gray-700">
                 معلومات شخصية
@@ -324,7 +303,7 @@ const BookSingerAppointment = () => {
                     : "bg-pink-600 hover:bg-pink-700"
                 } text-white px-6 transition-colors duration-300`}
               >
-                {isSubmitting ? "جاري الحجز..." : "تأكيد الحجز"}
+                {isSubmitting ? "جاري التحقق..." : "تأكيد الحجز"}
               </button>
             </div>
           </form>
