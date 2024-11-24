@@ -109,9 +109,8 @@ const HomePage = () => {
   const { t, setCurrentLang, isRTL, translations } = useTranslations();
 
   const images = [
-    "/src/assets/rami.png",
+    "https://firebasestorage.googleapis.com/v0/b/booking-appointments-4c1b0.appspot.com/o/halls%2FIMG_0552.WEBP?alt=media&token=80b9d980-11e2-4c98-b846-83854265e8d2",
     "https://firebasestorage.googleapis.com/v0/b/booking-appointments-4c1b0.appspot.com/o/halls%2FIMG_0285.jpg?alt=media&token=35346bdb-6acb-4f88-899c-3e24f1adaad9",
-    "/src/assets/1.jpg",
   ];
 
   useEffect(() => {
