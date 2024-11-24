@@ -1,14 +1,5 @@
-import { BrowserRouter as Router, Routes } from "react-router-dom";
-
 function HomePage() {
-  return (
-    <Router>
-      <div>
-        <h1>Welcome to the site</h1>
-        <Routes></Routes>
-      </div>
-    </Router>
-  );
+  return <h1>Welcome to rame site</h1>;
 }
 
 export default HomePage;
