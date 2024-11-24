@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { getDatabase, ref, set, get } from "firebase/database";
+import { getDatabase, ref, get } from "firebase/database";
 
 const AppointmentBooking = () => {
   const location = useLocation();
@@ -80,45 +80,28 @@ const AppointmentBooking = () => {
       return;
     }
 
-    const db = getDatabase();
-    const hallNameRef = ref(
-      db,
-      `HallNames/${formData.hallName}/${formData.date}`,
-    );
-    const snapshot = await get(hallNameRef);
-
-    if (snapshot.exists()) {
-      alert(
-        `هذه القاعة محجوزة في هذا التاريخ، يرجى اختيار تاريخ آخر. ${bookedDatesMessage}`,
-      );
-      return;
-    }
-
     try {
-      await set(hallNameRef, {
-        date: formData.date,
-        hallName: formData.hallName,
-        name: formData.name,
-        emailForOwner: formData.emailForOwner,
-        email: formData.email,
-        phone: formData.phone,
-        numberOfGuests: formData.numberOfGuests,
-        eventType: formData.eventType,
-        notes: formData.notes,
-      });
-
-      const bookingRef = ref(
+      // Check if the date is already booked
+      const db = getDatabase();
+      const hallNameRef = ref(
         db,
-        `HallsBookings/${formData.date}_${formData.hallName}`,
+        `HallNames/${formData.hallName}/${formData.date}`,
       );
-      await set(bookingRef, formData);
+      const snapshot = await get(hallNameRef);
 
-      console.log("Reservation saved successfully!");
+      if (snapshot.exists()) {
+        alert(
+          `هذه القاعة محجوزة في هذا التاريخ، يرجى اختيار تاريخ آخر. ${bookedDatesMessage}`,
+        );
+        return;
+      }
+
+      // If date is available, proceed to payment
       navigate("/PaymentForm", { state: formData });
     } catch (error) {
-      console.error("Error saving reservation:", error);
+      console.error("Error checking reservation:", error);
       alert(
-        "An error occurred while saving the reservation. Please try again later.",
+        "An error occurred while checking the reservation. Please try again later.",
       );
     }
   };
