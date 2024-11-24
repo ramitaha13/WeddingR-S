@@ -5,10 +5,7 @@ function HomePage() {
     <Router>
       <div>
         <h1>Welcome to the site</h1>
-        <Routes>
-          <Route path="/component-a" element={<ComponentA />} />
-          <Route path="/component-b" element={<ComponentB />} />
-        </Routes>
+        <Routes></Routes>
       </div>
     </Router>
   );
