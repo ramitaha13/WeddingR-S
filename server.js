@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 
 // CORS Middleware
-app.use(cors({ origin: "http://localhost:5174" })); // Match your frontend's origin
+app.use(cors({ origin: "https://wedding-r-s.vercel.app/" })); // Match your frontend's origin
 
 // PayPal SDK Setup
 const environment = new paypal.core.SandboxEnvironment(
