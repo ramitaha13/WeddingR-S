@@ -114,17 +114,38 @@ const BookSingerAppointment = () => {
   const sendConfirmationEmail = async (bookingData) => {
     try {
       await emailjs.send(
-        "service_jsdevfx",
-        "template_0y89jsi",
+        "service_b2fp82e",
+        "template_9w1rqqe",
         {
           user_name: bookingData.name,
           to_email: bookingData.email,
-          hall_name: bookingData.singerPreference,
-          date: bookingData.date,
+          singer_preference: bookingData.singerPreference,
+          event_date: bookingData.date,
           event_type: bookingData.occasion,
           phone: bookingData.phoneNumber,
         },
-        "LGxW6QBt5TMuKxaej",
+        "8W_dUcqNmH-sc-pYJ",
+      );
+      console.log("Email sent successfully");
+    } catch (error) {
+      console.error("Failed to send email:", error);
+    }
+  };
+
+  const sendConfirmationOwnerEmail = async (bookingData) => {
+    try {
+      await emailjs.send(
+        "service_b2fp82e",
+        "template_rr8mg4m",
+        {
+          user_name: bookingData.name,
+          owner_email: singerEmail,
+          singer_preference: bookingData.singerPreference,
+          event_date: bookingData.date,
+          event_type: bookingData.occasion,
+          phone: bookingData.phoneNumber,
+        },
+        "8W_dUcqNmH-sc-pYJ",
       );
       console.log("Email sent successfully");
     } catch (error) {
@@ -173,6 +194,7 @@ const BookSingerAppointment = () => {
       await set(singerBookingRef, bookingData);
 
       await sendConfirmationEmail(bookingData);
+      await sendConfirmationOwnerEmail(bookingData);
 
       alert("تم الحجز بنجاح!");
 
