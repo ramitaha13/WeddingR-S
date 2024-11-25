@@ -20,52 +20,21 @@ const db = getDatabase(app);
 
 const sendEmails = async (bookingData) => {
   try {
-    // Prepare email template parameters
-    const emailParams = {
-      to_name_singer: bookingData.singerPreference,
-      to_email_singer: bookingData.emailOfOwner,
-      to_name_client: bookingData.name,
-      to_email_client: bookingData.email,
-      booking_date: bookingData.date,
-      occasion: bookingData.occasion,
-      price: bookingData.price,
-      phone_number: bookingData.phoneNumber,
-      special_requirements: bookingData.specialRequirements || "لا يوجد",
-    };
-
-    // Send email to singer
-    // await emailjs.send(
-    //   EMAILJS_SERVICE_ID,
-    //   EMAILJS_TEMPLATE_ID_SINGER,
-    //   {
-    //     to_name: emailParams.to_name_singer,
-    //     to_email: emailParams.to_email_singer,
-    //     client_name: emailParams.to_name_client,
-    //     booking_date: emailParams.booking_date,
-    //     occasion: emailParams.occasion,
-    //     price: emailParams.price,
-    //     phone_number: emailParams.phone_number,
-    //     special_requirements: emailParams.special_requirements,
-    //   },
-    //   EMAILJS_PUBLIC_KEY,
-    // );
-
     // Send email to client
     await emailjs.send(
-      "service_jsdevfx",
-      "template_0y89jsi",
+      "service_b2fp82e",
+      "template_9w1rqqe",
       // EMAILJS_SERVICE_ID,
       // EMAILJS_TEMPLATE_ID_CLIENT,
       {
-        to_name: emailParams.to_name_client,
-        to_email: emailParams.to_email_client,
-        singer_name: emailParams.to_name_singer,
-        booking_date: emailParams.booking_date,
-        occasion: emailParams.occasion,
-        price: emailParams.price,
-        special_requirements: emailParams.special_requirements,
+        user_name: bookingData.name,
+        to_email: bookingData.email,
+        singer_preference: bookingData.singerPreference,
+        event_date: bookingData.date,
+        event_type: bookingData.occasion,
+        phone: bookingData.phoneNumber,
       },
-      "LGxW6QBt5TMuKxaej",
+      "8W_dUcqNmH-sc-pYJ",
       //EMAILJS_PUBLIC_KEY,
     );
 
