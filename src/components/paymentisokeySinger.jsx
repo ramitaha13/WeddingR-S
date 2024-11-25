@@ -68,21 +68,19 @@ const PaymentIsOkay = () => {
 
   const sendConfirmationEmail = async () => {
     try {
-      const cleanedEmail = bookingData.email.trim().toLowerCase();
-
       const templateParams = {
-        to_email: cleanedEmail,
-        owner_email: bookingData.emailOfOwner || "",
-        user_name: bookingData.name || "عميل",
-        hall_name: bookingData.singerPreference || "قاعة غير محددة",
-        event_type: bookingData.occasion || "مناسبة",
-        event_date: bookingData.date || "تاريخ غير محدد",
-        phone: bookingData.phoneNumber || "غير محدد",
+        to_email: bookingData.email, // Recipient's email
+        owner_email: bookingData.emailOfOwner, // Owner's email
+        user_name: bookingData.name || "عميل", // User's name
+        singer_preference: bookingData.singerPreference || "مغني غير محدد", // Singer preference
+        event_type: bookingData.occasion || "مناسبة غير محددة", // Occasion
+        event_date: bookingData.date || "تاريخ غير محدد", // Event date
+        phone: bookingData.phoneNumber || "غير محدد", // Phone number
       };
 
       const response = await emailjs.send(
-        "service_jsdevfx",
-        "template_0y89jsi",
+        "service_b2fp82e",
+        "template_9w1rqqe",
         templateParams,
       );
 
@@ -97,16 +95,17 @@ const PaymentIsOkay = () => {
   const sendOwnerConfirmationEmail = async () => {
     try {
       const templateParams = {
-        owner_email: bookingData.emailOfOwner || "",
-        user_name: bookingData.name || "عميل",
-        hall_name: bookingData.singerPreference || "قاعة غير محددة",
-        event_date: bookingData.date || "تاريخ غير محدد",
-        phone: bookingData.phoneNumber || "غير محدد",
+        owner_email: bookingData.emailOfOwner, // Owner's email
+        user_name: bookingData.name || "عميل", // User's name
+        singer_preference: bookingData.singerPreference || "مغني غير محدد", // Singer preference
+        event_type: bookingData.occasion || "مناسبة غير محددة", // Occasion
+        event_date: bookingData.date || "تاريخ غير محدد", // Event date
+        phone: bookingData.phoneNumber || "غير محدد", // Phone number
       };
 
       const response = await emailjs.send(
-        "service_jsdevfx",
-        "template_uvruslb",
+        "service_b2fp82e",
+        "template_rr8mg4m",
         templateParams,
       );
 
@@ -120,7 +119,7 @@ const PaymentIsOkay = () => {
 
   useEffect(() => {
     emailjs.init({
-      publicKey: "LGxW6QBt5TMuKxaej",
+      publicKey: "8W_dUcqNmH-sc-pYJ",
     });
 
     const processPayment = async () => {
