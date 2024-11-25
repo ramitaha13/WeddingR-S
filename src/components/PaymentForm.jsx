@@ -7,7 +7,7 @@ const Checkout = () => {
   const bookingData = location.state || {};
 
   // Convert ILS to USD since PayPal requires USD for some merchant accounts
-  const ilsAmount = 300;
+  const ilsAmount = 1;
   const usdAmount = (ilsAmount / 3.6).toFixed(2); // Using approximate conversion rate
 
   const style = {
