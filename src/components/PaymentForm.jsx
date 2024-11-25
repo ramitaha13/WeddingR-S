@@ -7,7 +7,7 @@ const Checkout = () => {
   const bookingData = location.state || {};
 
   // Convert ILS to USD since PayPal requires USD for some merchant accounts
-  const ilsAmount = 1;
+  const ilsAmount = 2;
   const usdAmount = (ilsAmount / 3.6).toFixed(2); // Using approximate conversion rate
 
   const style = {
@@ -62,8 +62,7 @@ const Checkout = () => {
 
       <PayPalScriptProvider
         options={{
-          "client-id":
-            "AY5h2PuwwKf8iR6wlmJt4a66enVIIS6WnOi6S5-m2RW7xdL3J9nnUIeAL70RaJS_nr402kIN35wwyJVc",
+          "client-id": process.env.PAYPAL_CLIENT_ID,
           currency: "ILS",
         }}
       >
