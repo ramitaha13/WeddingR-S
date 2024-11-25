@@ -87,6 +87,33 @@ const APpointmentBookinghall = () => {
     navigate(-1);
   };
 
+  const sendConfirmationEmail = async () => {
+    try {
+      const templateParams = {
+        to_email: bookingData.email.trim().toLowerCase(),
+        owner_email: bookingData.emailForOwner || "",
+        user_name: bookingData.name || "عميل",
+        hall_name: bookingData.hallName || "قاعة غير محددة",
+        event_type: bookingData.eventType || "مناسبة",
+        event_date: bookingData.date || "تاريخ غير محدد",
+        number_of_guests: bookingData.numberOfGuests || "غير محدد",
+        phone: bookingData.phone || "غير محدد",
+      };
+
+      const response = await emailjs.send(
+        "service_jsdevfx",
+        "template_0y89jsi",
+        templateParams,
+      );
+
+      console.log("Customer email confirmation sent:", response);
+    } catch (error) {
+      console.error("Customer email error:", error);
+      setEmailError(error);
+      throw error;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
