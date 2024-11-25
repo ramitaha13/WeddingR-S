@@ -63,7 +63,7 @@ const Checkout = () => {
       <PayPalScriptProvider
         options={{
           "client-id":
-            "AY5h2PuwwKf8iR6wlmJt4a66enVIIS6WnOi6S5-m2RW7xdL3J9nnUIeAL70RaJS_nr402kIN35wwyJVc",
+            "AargyiidtticEPtJBrursOo2ZzJPguQjFgsfgZutPVUQ7R2EQWUP7tJjYaXCxmTJkoDPijhKHcl_Pet9",
           currency: "ILS",
         }}
       >
