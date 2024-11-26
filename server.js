@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(cors({ origin: "https://wedding-r-s.vercel.app/" })); // Match your frontend's origin
 
 // PayPal SDK Setup
-const environment = new paypal.core.SandboxEnvironment(
+const environment = new paypal.core.LiveEnvironment(
   process.env.PAYPAL_CLIENT_ID,
   process.env.PAYPAL_SECRET,
 );

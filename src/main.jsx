@@ -35,6 +35,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Paymentisokey from "./components/paymentisokey";
 import PaymentForSinger from "./components/PaymentForSinger";
 import PaymentisokeySinger from "./components/paymentisokeySinger";
+import PaymentForm1 from "./components/PaymentForm1";
 
 const router = createBrowserRouter([
   {
