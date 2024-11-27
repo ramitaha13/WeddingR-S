@@ -236,35 +236,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/PaymentForm",
-    element: (
-      <ProtectedRoute>
-        <PaymentForm />
-      </ProtectedRoute>
-    ),
+    element: <PaymentForm />,
   },
   {
     path: "/paymentisokey",
-    element: (
-      <ProtectedRoute>
-        <Paymentisokey />
-      </ProtectedRoute>
-    ),
+    element: <Paymentisokey />,
   },
   {
     path: "/PaymentForSinger",
-    element: (
-      <ProtectedRoute>
-        <PaymentForSinger />
-      </ProtectedRoute>
-    ),
+    element: <PaymentForSinger />,
   },
   {
     path: "/paymentisokeySinger",
-    element: (
-      <ProtectedRoute>
-        <PaymentisokeySinger />
-      </ProtectedRoute>
-    ),
+    element: <PaymentisokeySinger />,
   },
   {
     path: "*",
