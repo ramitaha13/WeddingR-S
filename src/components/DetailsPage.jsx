@@ -1,7 +1,15 @@
 import { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue } from "firebase/database";
-import { Calendar, LogOut, Loader2, Clock, Star, Download } from "lucide-react";
+import {
+  Calendar,
+  LogOut,
+  Loader2,
+  Clock,
+  Star,
+  Download,
+  AlertCircle,
+} from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import * as XLSX from "xlsx";
 
@@ -14,6 +22,21 @@ const DetailsPage = () => {
   const [hallOrders, setHallOrders] = useState([]);
   const navigate = useNavigate();
   const { hallId } = useParams();
+  const [isUser, setIsUser] = useState(false);
+
+  useEffect(() => {
+    const userRole = localStorage.getItem("userRole");
+    if (userRole !== hallId) {
+      setIsUser(false);
+    } else {
+      setIsUser(true);
+    }
+  }, []);
+
+  const handleBack = () => {
+    navigate("/");
+    localStorage.clear();
+  };
 
   const [filters, setFilters] = useState({
     date: "",
@@ -426,6 +449,33 @@ const DetailsPage = () => {
       setSingerOrders(filteredOrders);
     }
   };
+
+  if (!isUser) {
+    return (
+      <div
+        dir="rtl"
+        className="min-h-screen bg-gray-100 p-6 flex items-center justify-center"
+      >
+        <div className="max-w-md w-full">
+          <div className="bg-red-50 border border-red-400 rounded-lg p-4 flex items-center">
+            <AlertCircle className="h-4 w-4 text-red-500 mr-2" />
+            <p className="text-center text-red-700 text-lg">
+              عذراً، لا يمكنك الوصول إلى هذه الصفحة. يجب أن تكون مسؤولاً للوصول
+              إليها.
+            </p>
+          </div>
+          <div className="mt-4 text-center">
+            <button
+              onClick={handleBack}
+              className="text-pink-600 hover:text-pink-700 font-medium"
+            >
+              العودة إلى الصفحة الرئيسية
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div dir="rtl" className="min-h-screen bg-gray-100 flex">
