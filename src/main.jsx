@@ -34,7 +34,6 @@ import { AuthProvider } from "./components/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Paymentisokey from "./components/paymentisokey";
 import PaymentForSinger from "./components/PaymentForSinger";
-
 import PaymentisokeySinger from "./components/paymentisokeySinger";
 
 const router = createBrowserRouter([
@@ -148,7 +147,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/statistics",
-    element: <Statistics />,
+    element: (
+      <ProtectedRoute>
+        <Statistics />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/editreservation/:hallId/:orderId",
@@ -216,7 +219,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/check-date/:hallId",
-    element: <DateChecker />,
+    element: (
+      <ProtectedRoute>
+        <DateChecker />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/datachekerforSinger/:hallId",
