@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
-import { ArrowRight, Calendar as CalendarIcon } from "lucide-react";
+import {
+  ArrowRight,
+  Calendar as CalendarIcon,
+  AlertCircle,
+} from "lucide-react";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set, get, onValue } from "firebase/database";
+import { useNavigate } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 
 const firebaseConfig = {
@@ -17,6 +22,8 @@ const BookSingerAppointment = () => {
   const [bookedDatesMessage, setBookedDatesMessage] = useState("");
   const [singers, setSingers] = useState([]);
   const [singerEmail, setSingerEmail] = useState("");
+  const navigate = useNavigate();
+  const [isUser, setIsUser] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -27,6 +34,15 @@ const BookSingerAppointment = () => {
     specialRequirements: "",
     price: "",
   });
+
+  useEffect(() => {
+    const userRole = localStorage.getItem("userRole");
+    if (userRole !== "admin") {
+      setIsUser(false);
+    } else {
+      setIsUser(true);
+    }
+  }, []);
 
   useEffect(() => {
     const singersRef = ref(db, "Singer");
@@ -216,6 +232,38 @@ const BookSingerAppointment = () => {
       setIsSubmitting(false);
     }
   };
+
+  const handleBack = () => {
+    navigate("home");
+    localStorage.clear();
+  };
+
+  if (!isUser) {
+    return (
+      <div
+        dir="rtl"
+        className="min-h-screen bg-gray-100 p-6 flex items-center justify-center"
+      >
+        <div className="max-w-md w-full">
+          <div className="bg-red-50 border border-red-400 rounded-lg p-4 flex items-center">
+            <AlertCircle className="h-4 w-4 text-red-500 mr-2" />
+            <p className="text-center text-red-700 text-lg">
+              عذراً، لا يمكنك الوصول إلى هذه الصفحة. يجب أن تكون مسؤولاً للوصول
+              إليها.
+            </p>
+          </div>
+          <div className="mt-4 text-center">
+            <button
+              onClick={handleBack}
+              className="text-pink-600 hover:text-pink-700 font-medium"
+            >
+              العودة إلى الصفحة الرئيسية
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div dir="rtl" className="min-h-screen bg-gray-100 p-6">
