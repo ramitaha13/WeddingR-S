@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowRight, AlertCircle } from "lucide-react";
 import { getDatabase, ref, set, get, onValue } from "firebase/database";
 import emailjs from "@emailjs/browser";
 
@@ -18,6 +19,17 @@ const AppointmentBooking = () => {
   });
 
   const [bookedDatesMessage, setBookedDatesMessage] = useState("");
+  const navigate = useNavigate();
+  const [isUser, setIsUser] = useState(false);
+
+  useEffect(() => {
+    const userRole = localStorage.getItem("userRole");
+    if (userRole !== "admin") {
+      setIsUser(false);
+    } else {
+      setIsUser(true);
+    }
+  }, []);
 
   // Fetch halls from Firebase on component mount
   useEffect(() => {
@@ -200,6 +212,37 @@ const AppointmentBooking = () => {
   ];
 
   const today = new Date().toISOString().split("T")[0];
+  const handleBack = () => {
+    navigate("home");
+    localStorage.clear();
+  };
+
+  if (!isUser) {
+    return (
+      <div
+        dir="rtl"
+        className="min-h-screen bg-gray-100 p-6 flex items-center justify-center"
+      >
+        <div className="max-w-md w-full">
+          <div className="bg-red-50 border border-red-400 rounded-lg p-4 flex items-center">
+            <AlertCircle className="h-4 w-4 text-red-500 mr-2" />
+            <p className="text-center text-red-700 text-lg">
+              عذراً، لا يمكنك الوصول إلى هذه الصفحة. يجب أن تكون مسؤولاً للوصول
+              إليها.
+            </p>
+          </div>
+          <div className="mt-4 text-center">
+            <button
+              onClick={handleBack}
+              className="text-pink-600 hover:text-pink-700 font-medium"
+            >
+              العودة إلى الصفحة الرئيسية
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
