@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue } from "firebase/database";
 import {
@@ -9,6 +9,10 @@ import {
   Star,
   Download,
   AlertCircle,
+  Menu,
+  X,
+  ChevronDown,
+  Search,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import * as XLSX from "xlsx";
@@ -20,6 +24,7 @@ const DetailsPage = () => {
   const [error, setError] = useState(null);
   const [singerOrders, setSingerOrders] = useState([]);
   const [hallOrders, setHallOrders] = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
   const { hallId } = useParams();
   const [isUser, setIsUser] = useState(false);
@@ -260,7 +265,6 @@ const DetailsPage = () => {
             phoneNumber: hallData.phoneNumber || "غير متوفر",
             email: hallData.email || "غير متوفر",
             capacity: hallData.capacity || "غير متوفر",
-            price: hallData.price || "غير متوفر",
           });
 
           const hallOrdersRef = ref(db, `HallNames/${hallId}`);
@@ -454,20 +458,18 @@ const DetailsPage = () => {
     return (
       <div
         dir="rtl"
-        className="min-h-screen bg-gray-100 p-6 flex items-center justify-center"
+        className="min-h-screen bg-gradient-to-br from-pink-50 to-white p-6 flex items-center justify-center"
       >
         <div className="max-w-md w-full">
-          <div className="bg-red-50 border border-red-400 rounded-lg p-4 flex items-center">
-            <AlertCircle className="h-4 w-4 text-red-500 mr-2" />
-            <p className="text-center text-red-700 text-lg">
+          <div className="bg-white border border-pink-100 rounded-xl p-6 shadow-lg flex flex-col items-center space-y-4">
+            <AlertCircle className="h-12 w-12 text-pink-500" />
+            <p className="text-center text-gray-800 text-lg font-medium">
               عذراً، لا يمكنك الوصول إلى هذه الصفحة. يجب أن تكون مسؤولاً للوصول
               إليها.
             </p>
-          </div>
-          <div className="mt-4 text-center">
             <button
               onClick={handleBack}
-              className="text-pink-600 hover:text-pink-700 font-medium"
+              className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
             >
               العودة إلى الصفحة الرئيسية
             </button>
@@ -477,307 +479,262 @@ const DetailsPage = () => {
     );
   }
 
-  return (
-    <div dir="rtl" className="min-h-screen bg-gray-100 flex">
-      {/* Right Sidebar */}
-      <div className="w-64 bg-white shadow-lg fixed right-0 h-full">
-        <div className="h-16 bg-pink-600 flex items-center justify-center">
-          <h1 className="text-white text-xl font-bold">لوحة التحكم</h1>
-        </div>
-
-        <div className="p-6">
-          <div className="space-y-4">
-            <button className="w-full flex items-center text-gray-700 hover:text-pink-600 py-2">
-              <Calendar className="w-5 h-5 ml-2" />
-              الحجوزات
-            </button>
-            <button
-              onClick={() => handleNavigation("statistics")}
-              className="w-full flex items-center text-gray-700 hover:text-pink-600 py-2"
-            >
-              <Star className="w-5 h-5 ml-2" />
-              احصائيات
-            </button>
-            <button
-              onClick={handleCheckDate}
-              className="w-full flex items-center text-gray-700 hover:text-pink-600 py-2"
-            >
-              <Clock className="w-5 h-5 ml-2" />
-              التحقق من التاريخ
-            </button>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center text-red-600 hover:text-red-700 py-2"
-            >
-              <LogOut className="w-5 h-5 ml-2" />
-              تسجيل الخروج
-            </button>
-          </div>
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-white flex justify-center items-center">
+        <div className="flex flex-col items-center space-y-4">
+          <Loader2 className="w-12 h-12 text-pink-600 animate-spin" />
+          <p className="text-gray-600 font-medium">جاري التحميل...</p>
         </div>
       </div>
+    );
+  }
 
-      {/* Main Content Area */}
-      <div className="mr-64 flex-1 p-6">
-        {/* Profile Section */}
-        <div className="bg-white rounded-lg shadow mb-6">
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              {dataType === "singer" ? "معلومات المطرب" : "معلومات القاعة"}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <p className="text-gray-600 mb-2">الاسم</p>
-                <p className="text-lg font-semibold">{data?.name}</p>
-              </div>
-
-              {dataType === "hall" ? (
-                <div>
-                  <p className="text-gray-600 mb-2">الموقع</p>
-                  <p className="text-lg font-semibold">{data?.location}</p>
-                </div>
-              ) : null}
-
-              <div>
-                <p className="text-gray-600 mb-2">رقم الهاتف</p>
-                <p className="text-lg font-semibold">{data?.phoneNumber}</p>
-              </div>
-
-              <div>
-                <p className="text-gray-600 mb-2">البريد الإلكتروني</p>
-                <p className="text-lg font-semibold">{data?.email}</p>
-              </div>
-
-              {dataType === "hall" ? (
-                <div>
-                  <p className="text-gray-600 mb-2">السعة</p>
-                  <p className="text-lg font-semibold">{data?.capacity}</p>
-                </div>
-              ) : null}
-
-              {dataType === "singer" ? (
-                <>
-                  <div>
-                    <p className="text-gray-600 mb-2">انستغرام</p>
-                    <p className="text-lg font-semibold">{data?.instagram}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600 mb-2">تيك توك</p>
-                    <p className="text-lg font-semibold">{data?.tiktok}</p>
-                  </div>
-                </>
-              ) : null}
-            </div>
-          </div>
+  return (
+    <div dir="rtl" className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <div
+        className={`fixed inset-y-0 right-0 z-50 w-64 bg-white shadow-xl transform transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "translate-x-full"}`}
+      >
+        <div className="h-16 bg-gradient-to-r from-pink-600 to-pink-700 flex items-center justify-between px-4">
+          <h1 className="text-white text-xl font-bold">لوحة التحكم</h1>
+          <button onClick={() => setSidebarOpen(false)} className="lg:hidden">
+            <X className="h-6 w-6 text-white" />
+          </button>
         </div>
 
-        {/* Hall Orders Table */}
-        {dataType === "hall" && (
-          <div className="bg-white rounded-lg shadow">
+        <nav className="p-4 space-y-2">
+          {[
+            { icon: Calendar, label: "الحجوزات", action: () => {} },
+            {
+              icon: Star,
+              label: "احصائيات",
+              action: () => handleNavigation("statistics"),
+            },
+            {
+              icon: Clock,
+              label: "التحقق من التاريخ",
+              action: handleCheckDate,
+            },
+            {
+              icon: LogOut,
+              label: "تسجيل الخروج",
+              action: handleLogout,
+              className: "text-red-600 hover:bg-red-50",
+            },
+          ].map((item, index) => (
+            <button
+              key={index}
+              onClick={item.action}
+              className={`w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-lg transition-colors ${item.className || "text-gray-700 hover:bg-pink-50 hover:text-pink-600"}`}
+            >
+              <item.icon className="w-5 h-5" />
+              <span className="font-medium">{item.label}</span>
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* Main Content */}
+      <div
+        className={`flex-1 transition-all duration-300 ${sidebarOpen ? "mr-64" : "mr-0"}`}
+      >
+        <header className="bg-white shadow-sm border-b border-gray-200 h-16 flex items-center px-6">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 rounded-lg hover:bg-gray-100"
+          >
+            <Menu className="h-6 w-6 text-gray-600" />
+          </button>
+        </header>
+
+        <main className="p-6 space-y-6">
+          {/* Profile Card */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-800">
+                {dataType === "singer" ? "معلومات المطرب" : "معلومات القاعة"}
+              </h2>
+            </div>
+            <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Object.entries(data || {}).map(([key, value]) => (
+                <div key={key} className="space-y-2">
+                  <p className="text-sm text-gray-500">{key}</p>
+                  <p className="text-base font-medium text-gray-900">{value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Orders Section */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
             <div className="p-6">
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                 <div className="flex items-center space-x-4 space-x-reverse">
-                  <h2 className="text-2xl font-bold text-gray-800">
-                    حجوزات القاعة
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    {dataType === "singer" ? "طلبات الحجز" : "حجوزات القاعة"}
                   </h2>
                   <button
-                    onClick={handleAddNewBooking}
-                    className="flex items-center px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 ml-2"
+                    onClick={
+                      dataType === "singer"
+                        ? handleAddNewBookingforSinger
+                        : handleAddNewBooking
+                    }
+                    className="inline-flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
                   >
                     <Calendar className="w-5 h-5 ml-2" />
                     إضافة حجز جديد
                   </button>
-                  <button
-                    onClick={exportToExcel}
-                    className="flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-                  >
-                    <Download className="w-5 h-5 ml-2" />
-                    تحميل كملف Excel
-                  </button>
+                </div>
+
+                <div className="flex items-center space-x-4 space-x-reverse">
                   <button
                     onClick={handleFilterOldReservations}
-                    className="flex items-center px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 ml-2"
+                    className="inline-flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
                   >
                     <Calendar className="w-5 h-5 ml-2" />
                     عرض الحجوزات القديمة
                   </button>
-                </div>
-                <div className="bg-pink-100 text-pink-800 px-4 py-2 rounded-full">
-                  عدد الحجوزات: {filteredHallOrders.length}
+                  <button
+                    onClick={exportToExcel}
+                    className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    <Download className="w-5 h-5 ml-2" />
+                    تحميل Excel
+                  </button>
+                  <div className="bg-pink-50 text-pink-700 px-4 py-2 rounded-lg font-medium">
+                    عدد الحجوزات:{" "}
+                    {
+                      (dataType === "hall"
+                        ? filteredHallOrders
+                        : filteredSingerOrders
+                      ).length
+                    }
+                  </div>
                 </div>
               </div>
-              {renderFilters()}
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
+
+              {/* Filters */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                {Object.entries(filters).map(([key, value]) => (
+                  <div key={key} className="relative">
+                    <input
+                      type="text"
+                      name={key}
+                      value={value}
+                      onChange={handleFilterChange}
+                      placeholder={
+                        key === "date" ? "DD-MM-YYYY" : `البحث حسب ${key}`
+                      }
+                      className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Table */}
+              <div className="overflow-x-auto rounded-lg border border-gray-200">
+                <table className="w-full">
                   <thead>
                     <tr className="bg-gray-50">
-                      <th className="px-4 py-3 text-right border whitespace-nowrap">
-                        نوع السهره
-                      </th>
-                      <th className="px-4 py-3 text-right border">
-                        تاريخ الحجز
-                      </th>
-                      <th className="px-4 py-3 text-right border">
-                        اسم الزبون
-                      </th>
-                      <th className="px-4 py-3 text-right border">
-                        رقم الهاتف
-                      </th>
-                      <th className="px-4 py-3 text-right border">
-                        البريد الإلكتروني
-                      </th>
-                      <th className="px-4 py-3 text-right border">
-                        عدد الضيوف
-                      </th>
-                      <th className="px-4 py-3 text-right border">تعديل</th>
+                      {(dataType === "hall"
+                        ? [
+                            "نوع السهره",
+                            "تاريخ الحجز",
+                            "اسم الزبون",
+                            "رقم الهاتف",
+                            "البريد الإلكتروني",
+                            "عدد الضيوف",
+                            "",
+                          ]
+                        : [
+                            "تاريخ الإنشاء",
+                            "تاريخ الحجز",
+                            "اسم الزبون",
+                            "رقم الهاتف",
+                            "نوع السهره",
+                            "المطرب",
+                            "",
+                          ]
+                      ).map((header, index) => (
+                        <th
+                          key={index}
+                          className="px-4 py-3 text-right text-sm font-medium text-gray-600"
+                        >
+                          {header}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
-                  <tbody>
-                    {filteredHallOrders.map((order) => (
-                      <tr key={order.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-2 border">{order.eventType}</td>
-                        <td className="px-4 py-3 border">
-                          {formatDate(order.date)}
-                        </td>
-                        <td className="px-4 py-3 border">{order.name}</td>
-                        <td className="px-4 py-3 border">{order.phone}</td>
-                        <td className="px-4 py-3 border">{order.email}</td>
-                        <td className="px-4 py-3 border">
-                          {order.numberOfGuests}
-                        </td>
-                        <td className="px-4 py-3 border">
-                          <button
-                            onClick={() => handleEditOrder(order)}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                          >
-                            تعديل
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                  <tbody className="divide-y divide-gray-200">
                     {(dataType === "hall"
                       ? filteredHallOrders
                       : filteredSingerOrders
-                    ).length === 0 && (
-                      <tr>
-                        <td
-                          colSpan={dataType === "hall" ? 7 : 6}
-                          className="px-4 py-3 text-center text-gray-500"
-                        >
-                          لا توجد حجوزات مطابقة
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Singer Orders Table */}
-        {dataType === "singer" && (
-          <div className="bg-white rounded-lg shadow">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center space-x-4 space-x-reverse">
-                  <h2 className="text-2xl font-bold text-gray-800">
-                    طلبات الحجز
-                  </h2>
-                  <button
-                    onClick={handleAddNewBookingforSinger}
-                    className="flex items-center px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 ml-2"
-                  >
-                    <Calendar className="w-5 h-5 ml-2" />
-                    إضافة حجز جديد
-                  </button>
-                  <button
-                    onClick={exportToExcel}
-                    className="flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-                  >
-                    <Download className="w-5 h-5 ml-2" />
-                    تحميل كملف Excel
-                  </button>
-                  <button
-                    onClick={handleFilterOldReservations}
-                    className="flex items-center px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 ml-2"
-                  >
-                    <Calendar className="w-5 h-5 ml-2" />
-                    عرض الحجوزات القديمة
-                  </button>
-                </div>
-                <div className="bg-pink-100 text-pink-800 px-4 py-2 rounded-full">
-                  عدد الطلبات: {filteredSingerOrders.length}
-                </div>
-              </div>
-
-              {renderFilters()}
-
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="bg-gray-50">
-                      <th className="px-4 py-3 text-right border whitespace-nowrap">
-                        تاريخ ووقت الإنشاء
-                      </th>
-                      <th className="px-4 py-3 text-right border">
-                        تاريخ الحجز
-                      </th>
-                      <th className="px-4 py-3 text-right border">
-                        اسم الزبون
-                      </th>
-                      <th className="px-4 py-3 text-right border">
-                        رقم الهاتف
-                      </th>
-                      <th className="px-4 py-3 text-right border">
-                        نوع السهره
-                      </th>
-                      <th className="px-4 py-3 text-right border">المطرب</th>
-                      <th className="px-4 py-3 text-right border">تعديل</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredSingerOrders.map((order) => (
+                    ).map((order) => (
                       <tr key={order.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-2 border">
-                          {formatCreatedAt(order.createdAt)}
-                        </td>
-                        <td className="px-4 py-3 border">
-                          {formatDate(order.date)}
-                        </td>
-                        <td className="px-4 py-3 border">{order.name}</td>
-                        <td className="px-4 py-3 border">
-                          {order.phoneNumber}
-                        </td>
-                        <td className="px-4 py-3 border">{order.occasion}</td>
-                        <td className="px-4 py-3 border">
-                          {order.singerPreference}
-                        </td>
-                        <td className="px-4 py-3 border">
-                          <buttona
-                            onClick={() => handleEditSingerBooking(order)}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                          >
-                            تعديل
-                          </buttona>
-                        </td>
+                        {dataType === "hall" ? (
+                          <>
+                            <td className="px-4 py-3">{order.eventType}</td>
+                            <td className="px-4 py-3">
+                              {formatDate(order.date)}
+                            </td>
+                            <td className="px-4 py-3">{order.name}</td>
+                            <td className="px-4 py-3">{order.phone}</td>
+                            <td className="px-4 py-3">{order.email}</td>
+                            <td className="px-4 py-3">
+                              {order.numberOfGuests}
+                            </td>
+                            <td className="px-4 py-3">
+                              <button
+                                onClick={() => handleEditOrder(order)}
+                                className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                              >
+                                تعديل
+                              </button>
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td className="px-4 py-3">
+                              {formatCreatedAt(order.createdAt)}
+                            </td>
+                            <td className="px-4 py-3">
+                              {formatDate(order.date)}
+                            </td>
+                            <td className="px-4 py-3">{order.name}</td>
+                            <td className="px-4 py-3">{order.phoneNumber}</td>
+                            <td className="px-4 py-3">{order.occasion}</td>
+                            <td className="px-4 py-3">
+                              {order.singerPreference}
+                            </td>
+                            <td className="px-4 py-3">
+                              <button
+                                onClick={() => handleEditSingerBooking(order)}
+                                className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                              >
+                                تعديل
+                              </button>
+                            </td>
+                          </>
+                        )}
                       </tr>
                     ))}
-                    {filteredSingerOrders.length === 0 && (
-                      <tr>
-                        <td
-                          colSpan="6"
-                          className="px-4 py-3 text-center text-gray-500"
-                        >
-                          لا توجد طلبات حجز مطابقة
-                        </td>
-                      </tr>
-                    )}
                   </tbody>
                 </table>
+
+                {(dataType === "hall"
+                  ? filteredHallOrders
+                  : filteredSingerOrders
+                ).length === 0 && (
+                  <div className="text-center py-12">
+                    <p className="text-gray-500">لا توجد حجوزات مطابقة</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        )}
+        </main>
       </div>
     </div>
   );
