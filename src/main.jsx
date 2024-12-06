@@ -35,6 +35,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Paymentisokey from "./components/paymentisokey";
 import PaymentForSinger from "./components/PaymentForSinger";
 import PaymentisokeySinger from "./components/paymentisokeySinger";
+import CallUs from "./components/CallUs";
 
 const router = createBrowserRouter([
   {
@@ -256,6 +257,10 @@ const router = createBrowserRouter([
   {
     path: "/paymentisokeySinger",
     element: <PaymentisokeySinger />,
+  },
+  {
+    path: "/CallUs",
+    element: <CallUs />,
   },
   {
     path: "*",

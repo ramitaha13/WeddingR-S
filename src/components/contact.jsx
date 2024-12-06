@@ -16,6 +16,7 @@ const HallsPage = () => {
     { id: 1, name: "الرئيسية", icon: "🏠" },
     { id: 2, name: "القاعات", icon: "🏰" },
     { id: 3, name: "المطربين", icon: "🎤" },
+    { id: 4, name: "تواصل معنا", icon: "📞" },
   ];
 
   useEffect(() => {
@@ -63,6 +64,9 @@ const HallsPage = () => {
         break;
       case "المطربين":
         navigate("/singersPage");
+        break;
+      case "تواصل معنا":
+        navigate("/CallUs");
         break;
     }
   };

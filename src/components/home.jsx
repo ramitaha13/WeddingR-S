@@ -127,6 +127,7 @@ const HomePage = () => {
     { id: 1, name: "home", icon: "🏠" },
     { id: 2, name: "halls", icon: "🏰" },
     { id: 3, name: "singers", icon: "🎤" },
+    { id: 4, name: "call", icon: "📞", text: "تواصل معنا" },
   ];
 
   const handleMenuItemClick = (itemName) => {
@@ -141,6 +142,9 @@ const HomePage = () => {
         break;
       case "singers":
         navigate("/singersPage");
+        break;
+      case "call":
+        navigate("/CallUs");
         break;
     }
   };
@@ -207,7 +211,7 @@ const HomePage = () => {
                       : "text-gray-600"
                   }`}
                 >
-                  {t[item.name]}
+                  {item.text || t[item.name]}
                 </span>
               </div>
             </div>

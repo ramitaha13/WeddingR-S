@@ -14,6 +14,7 @@ const SingersPage = () => {
     { id: 1, name: "الرئيسية", icon: "🏠" },
     { id: 2, name: "القاعات", icon: "🏰" },
     { id: 3, name: "المطربين", icon: "🎤" },
+    { id: 4, name: "تواصل معنا", icon: "📞" },
   ];
 
   useEffect(() => {
@@ -58,6 +59,9 @@ const SingersPage = () => {
         break;
       case "القاعات":
         navigate("/contact");
+        break;
+      case "تواصل معنا":
+        navigate("/CallUs");
         break;
     }
   };
