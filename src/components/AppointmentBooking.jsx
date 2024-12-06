@@ -97,7 +97,7 @@ const AppointmentBooking = () => {
       }
 
       // If date is available, proceed to payment
-      navigate("/PaymentForm", { state: formData });
+      navigate("/paymentisokey", { state: formData });
     } catch (error) {
       console.error("Error checking reservation:", error);
       alert(

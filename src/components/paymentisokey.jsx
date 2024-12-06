@@ -132,8 +132,8 @@ const PaymentIsOkay = () => {
         await saveToFirebase();
 
         // Then send confirmation emails
-        await sendConfirmationEmail();
-        await sendOwnerEmail();
+        // await sendConfirmationEmail();
+        // await sendOwnerEmail();
 
         alert("تمت عملية الدفع والحجز بنجاح. شكراً لك!");
         navigate("/");
