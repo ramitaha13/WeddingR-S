@@ -8,8 +8,9 @@ const LanguageSelector = ({ onLanguageChange, translations }) => {
     <div className="relative group">
       <button className="flex items-center gap-2 text-pink-600 hover:text-pink-700 transition-colors">
         <Globe className="w-5 h-5" />
+        <span className="text-sm">Language</span>
       </button>
-      <div className="absolute top-full right-0 mt-2 bg-white shadow-lg rounded-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+      <div className="absolute top-full left-0 mt-2 bg-white shadow-lg rounded-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
         {Object.keys(translations).map((lang) => (
           <button
             key={lang}
@@ -51,6 +52,8 @@ const useTranslations = () => {
       galleryDescription: "شاهد صور حية للقاعات والمناسبات السابقة",
       joinFamily: "كن جزءاً من عائلتنا",
       contactUs: "نرحب بانضمامك إلى شبكتنا المتميزة. للتواصل معنا:",
+      language: "اللغة",
+      callUs: "تواصل معنا",
     },
     he: {
       home: "דף הבית",
@@ -70,6 +73,8 @@ const useTranslations = () => {
       galleryDescription: "צפה בתמונות חיות של האולמות ואירועים קודמים",
       joinFamily: "הצטרף למשפחה שלנו",
       contactUs: "אנו מזמינים אותך להצטרף לרשת המצוינת שלנו. ליצירת קשר:",
+      language: "שפה",
+      callUs: "צור קשר",
     },
     en: {
       home: "Home",
@@ -91,6 +96,8 @@ const useTranslations = () => {
       joinFamily: "Join Our Family",
       contactUs:
         "We welcome you to join our distinguished network. Contact us:",
+      language: "Language",
+      callUs: "Contact Us",
     },
   };
 
@@ -127,7 +134,7 @@ const HomePage = () => {
     { id: 1, name: "home", icon: "🏠" },
     { id: 2, name: "halls", icon: "🏰" },
     { id: 3, name: "singers", icon: "🎤" },
-    { id: 4, name: "call", icon: "📞", text: "تواصل معنا" },
+    { id: 4, name: "call", icon: "📞", text: t.callUs },
   ];
 
   const handleMenuItemClick = (itemName) => {
@@ -216,6 +223,16 @@ const HomePage = () => {
               </div>
             </div>
           ))}
+
+          {/* Language Selector in Sidebar */}
+          <div className="mx-4 mb-2 pt-4 border-t border-gray-200">
+            <div className="p-4">
+              <LanguageSelector
+                onLanguageChange={setCurrentLang}
+                translations={translations}
+              />
+            </div>
+          </div>
         </nav>
       </div>
 
@@ -224,11 +241,7 @@ const HomePage = () => {
         className={`${isRTL ? "lg:mr-72" : "lg:ml-72"} flex-1 transition-all duration-300`}
       >
         {/* Header */}
-        <header className="h-24 bg-white shadow-lg flex items-center justify-between px-4 lg:px-8">
-          <LanguageSelector
-            onLanguageChange={setCurrentLang}
-            translations={translations}
-          />
+        <header className="h-24 bg-white shadow-lg flex items-center justify-end px-4 lg:px-8">
           <div
             onClick={handleLogin}
             className="flex items-center gap-3 text-pink-600 hover:text-pink-700 cursor-pointer group transition-all duration-300"
