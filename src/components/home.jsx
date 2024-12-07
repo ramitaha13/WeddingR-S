@@ -130,6 +130,20 @@ const HomePage = () => {
     return () => clearInterval(interval);
   }, [images.length]);
 
+  const handleCardClick = (type) => {
+    switch (type) {
+      case "halls":
+        navigate("/contact");
+        break;
+      case "singers":
+        navigate("/singersPage");
+        break;
+      // Default case handles gallery or other cards
+      default:
+        break;
+    }
+  };
+
   const menuItems = [
     { id: 1, name: "home", icon: "🏠" },
     { id: 2, name: "halls", icon: "🏰" },
@@ -310,20 +324,24 @@ const HomePage = () => {
                 icon: "🏰",
                 title: t.luxuryHalls,
                 description: t.hallsDescription,
+                type: "halls",
               },
               {
                 icon: "🎤",
                 title: t.professionalSingers,
                 description: t.singersDescription,
+                type: "singers",
               },
               {
                 icon: "📸",
                 title: t.gallery,
                 description: t.galleryDescription,
+                type: "gallery",
               },
             ].map((card, index) => (
               <div
                 key={index}
+                onClick={() => handleCardClick(card.type)}
                 className="bg-white p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer"
               >
                 <div className="text-4xl lg:text-5xl mb-4 lg:mb-6 transform transition-transform duration-300 hover:scale-110">
