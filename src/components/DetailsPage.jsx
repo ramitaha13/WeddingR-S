@@ -490,17 +490,119 @@ const DetailsPage = () => {
     );
   }
 
-  return (
-    <div dir="rtl" className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
+  // MobileNav Component for small screens
+  const MobileNav = ({
+    isOpen,
+    onClose,
+    onNavigate,
+    onLogout,
+    onCheckDate,
+  }) => {
+    return (
       <div
-        className={`fixed inset-y-0 right-0 z-50 w-64 bg-white shadow-xl transform transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
       >
-        <div className="h-16 bg-gradient-to-r from-pink-600 to-pink-700 flex items-center justify-between px-4">
+        <div
+          className={`fixed inset-y-0 right-0 w-64 bg-white shadow-xl transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+        >
+          <div className="h-16 bg-gradient-to-r from-pink-600 to-pink-700 flex items-center justify-between px-4">
+            <h1 className="text-white text-xl font-bold">لوحة التحكم</h1>
+            <button onClick={onClose}>
+              <X className="h-6 w-6 text-white" />
+            </button>
+          </div>
+
+          <nav className="p-4 space-y-2">
+            {[
+              { icon: Calendar, label: "الحجوزات", action: () => {} },
+              {
+                icon: Star,
+                label: "احصائيات",
+                action: () => onNavigate("statistics"),
+              },
+              { icon: Clock, label: "التحقق من التاريخ", action: onCheckDate },
+              {
+                icon: LogOut,
+                label: "تسجيل الخروج",
+                action: onLogout,
+                className: "text-red-600 hover:bg-red-50",
+              },
+            ].map((item, index) => (
+              <button
+                key={index}
+                onClick={item.action}
+                className={`w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-lg transition-colors ${item.className || "text-gray-700 hover:bg-pink-50 hover:text-pink-600"}`}
+              >
+                <item.icon className="w-5 h-5" />
+                <span className="font-medium">{item.label}</span>
+              </button>
+            ))}
+          </nav>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div dir="rtl" className="min-h-screen bg-gray-50">
+      {/* Mobile Navigation */}
+      <div
+        className={`fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity lg:hidden ${
+          sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+      >
+        <div
+          className={`fixed inset-y-0 right-0 w-64 bg-white shadow-xl transform transition-transform duration-300 ${
+            sidebarOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <div className="h-16 bg-gradient-to-r from-pink-600 to-pink-700 flex items-center justify-between px-4">
+            <h1 className="text-white text-xl font-bold">لوحة التحكم</h1>
+            <button onClick={() => setSidebarOpen(false)}>
+              <X className="h-6 w-6 text-white" />
+            </button>
+          </div>
+
+          <nav className="p-4 space-y-2">
+            {[
+              { icon: Calendar, label: "الحجوزات", action: () => {} },
+              {
+                icon: Star,
+                label: "احصائيات",
+                action: () => handleNavigation("statistics"),
+              },
+              {
+                icon: Clock,
+                label: "التحقق من التاريخ",
+                action: handleCheckDate,
+              },
+              {
+                icon: LogOut,
+                label: "تسجيل الخروج",
+                action: handleLogout,
+                className: "text-red-600 hover:bg-red-50",
+              },
+            ].map((item, index) => (
+              <button
+                key={index}
+                onClick={item.action}
+                className={`w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-lg transition-colors ${
+                  item.className ||
+                  "text-gray-700 hover:bg-pink-50 hover:text-pink-600"
+                }`}
+              >
+                <item.icon className="w-5 h-5" />
+                <span className="font-medium">{item.label}</span>
+              </button>
+            ))}
+          </nav>
+        </div>
+      </div>
+
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:block fixed inset-y-0 right-0 w-64 bg-white shadow-xl">
+        <div className="h-16 bg-gradient-to-r from-pink-600 to-pink-700 flex items-center px-4">
           <h1 className="text-white text-xl font-bold">لوحة التحكم</h1>
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden">
-            <X className="h-6 w-6 text-white" />
-          </button>
         </div>
 
         <nav className="p-4 space-y-2">
@@ -526,7 +628,10 @@ const DetailsPage = () => {
             <button
               key={index}
               onClick={item.action}
-              className={`w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-lg transition-colors ${item.className || "text-gray-700 hover:bg-pink-50 hover:text-pink-600"}`}
+              className={`w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-lg transition-colors ${
+                item.className ||
+                "text-gray-700 hover:bg-pink-50 hover:text-pink-600"
+              }`}
             >
               <item.icon className="w-5 h-5" />
               <span className="font-medium">{item.label}</span>
@@ -536,31 +641,36 @@ const DetailsPage = () => {
       </div>
 
       {/* Main Content */}
-      <div
-        className={`flex-1 transition-all duration-300 ${sidebarOpen ? "mr-64" : "mr-0"}`}
-      >
-        <header className="bg-white shadow-sm border-b border-gray-200 h-16 flex items-center px-6">
+      <div className="lg:mr-64">
+        {/* Header */}
+        <header className="bg-white shadow-sm border-b border-gray-200 h-16 flex items-center justify-between px-4">
           <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-lg hover:bg-gray-100"
+            onClick={() => setSidebarOpen(true)}
+            className="lg:hidden p-2 rounded-lg hover:bg-gray-100"
           >
             <Menu className="h-6 w-6 text-gray-600" />
           </button>
+          <h1 className="text-lg font-semibold text-gray-800">
+            {dataType === "singer" ? "لوحة تحكم المطرب" : "لوحة تحكم القاعة"}
+          </h1>
         </header>
 
-        <main className="p-6 space-y-6">
+        {/* Main Content Area */}
+        <main className="p-4 lg:p-6 space-y-4 lg:space-y-6">
           {/* Profile Card */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-800">
+            <div className="px-4 lg:px-6 py-4 border-b border-gray-200">
+              <h2 className="text-lg lg:text-xl font-semibold text-gray-800">
                 {dataType === "singer" ? "معلومات المطرب" : "معلومات القاعة"}
               </h2>
             </div>
-            <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="p-4 lg:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
               {Object.entries(data || {}).map(([key, value]) => (
-                <div key={key} className="space-y-2">
+                <div key={key} className="space-y-1 lg:space-y-2">
                   <p className="text-sm text-gray-500">{key}</p>
-                  <p className="text-base font-medium text-gray-900">{value}</p>
+                  <p className="text-sm lg:text-base font-medium text-gray-900">
+                    {value}
+                  </p>
                 </div>
               ))}
             </div>
@@ -568,10 +678,11 @@ const DetailsPage = () => {
 
           {/* Orders Section */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-            <div className="p-6">
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                <div className="flex items-center space-x-4 space-x-reverse">
-                  <h2 className="text-xl font-semibold text-gray-800">
+            <div className="p-4 lg:p-6">
+              {/* Orders Header */}
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+                <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+                  <h2 className="text-lg lg:text-xl font-semibold text-gray-800">
                     {dataType === "singer" ? "طلبات الحجز" : "حجوزات القاعة"}
                   </h2>
                   <button
@@ -580,29 +691,29 @@ const DetailsPage = () => {
                         ? handleAddNewBookingforSinger
                         : handleAddNewBooking
                     }
-                    className="inline-flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
+                    className="w-full lg:w-auto inline-flex items-center justify-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
                   >
                     <Calendar className="w-5 h-5 ml-2" />
                     إضافة حجز جديد
                   </button>
                 </div>
 
-                <div className="flex items-center space-x-4 space-x-reverse">
+                <div className="flex flex-col lg:flex-row gap-4">
                   <button
                     onClick={handleFilterOldReservations}
-                    className="inline-flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
+                    className="w-full lg:w-auto inline-flex items-center justify-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
                   >
                     <Calendar className="w-5 h-5 ml-2" />
                     عرض الحجوزات القديمة
                   </button>
                   <button
                     onClick={exportToExcel}
-                    className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                    className="w-full lg:w-auto inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                   >
                     <Download className="w-5 h-5 ml-2" />
                     تحميل Excel
                   </button>
-                  <div className="bg-pink-50 text-pink-700 px-4 py-2 rounded-lg font-medium">
+                  <div className="w-full lg:w-auto bg-pink-50 text-pink-700 px-4 py-2 rounded-lg font-medium text-center">
                     عدد الحجوزات:{" "}
                     {
                       (dataType === "hall"
@@ -615,7 +726,7 @@ const DetailsPage = () => {
               </div>
 
               {/* Filters */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                 {Object.entries(filters).map(([key, value]) => (
                   <div key={key} className="relative">
                     <input
@@ -626,7 +737,7 @@ const DetailsPage = () => {
                       placeholder={
                         key === "date" ? "DD-MM-YYYY" : `البحث حسب ${key}`
                       }
-                      className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                      className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm lg:text-base"
                     />
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   </div>
@@ -634,103 +745,125 @@ const DetailsPage = () => {
               </div>
 
               {/* Table */}
-              <div className="overflow-x-auto rounded-lg border border-gray-200">
-                <table className="w-full">
-                  <thead>
-                    <tr className="bg-gray-50">
-                      {(dataType === "hall"
-                        ? [
-                            "نوع السهره",
-                            "تاريخ الحجز",
-                            "اسم الزبون",
-                            "رقم الهاتف",
-                            "البريد الإلكتروني",
-                            "عدد الضيوف",
-                            "",
-                          ]
-                        : [
-                            "تاريخ الإنشاء",
-                            "تاريخ الحجز",
-                            "اسم الزبون",
-                            "رقم الهاتف",
-                            "نوع السهره",
-                            "المطرب",
-                            "",
-                          ]
-                      ).map((header, index) => (
-                        <th
-                          key={index}
-                          className="px-4 py-3 text-right text-sm font-medium text-gray-600"
-                        >
-                          {header}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
+              <div className="overflow-x-auto -mx-4 lg:mx-0">
+                <div className="inline-block min-w-full align-middle">
+                  <div className="overflow-hidden border border-gray-200 rounded-lg">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          {(dataType === "hall"
+                            ? [
+                                "نوع السهره",
+                                "تاريخ الحجز",
+                                "اسم الزبون",
+                                "رقم الهاتف",
+                                "البريد الإلكتروني",
+                                "عدد الضيوف",
+                                "",
+                              ]
+                            : [
+                                "تاريخ الإنشاء",
+                                "تاريخ الحجز",
+                                "اسم الزبون",
+                                "رقم الهاتف",
+                                "نوع السهره",
+                                "المطرب",
+                                "",
+                              ]
+                          ).map((header, index) => (
+                            <th
+                              key={index}
+                              className="px-3 lg:px-4 py-3 text-right text-xs lg:text-sm font-medium text-gray-600"
+                            >
+                              {header}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200 bg-white">
+                        {(dataType === "hall"
+                          ? filteredHallOrders
+                          : filteredSingerOrders
+                        ).map((order) => (
+                          <tr key={order.id} className="hover:bg-gray-50">
+                            {dataType === "hall" ? (
+                              <>
+                                <td className="px-3 lg:px-4 py-3 text-xs lg:text-sm">
+                                  {order.eventType}
+                                </td>
+                                <td className="px-3 lg:px-4 py-3 text-xs lg:text-sm">
+                                  {formatDate(order.date)}
+                                </td>
+                                <td className="px-3 lg:px-4 py-3 text-xs lg:text-sm">
+                                  {order.name}
+                                </td>
+                                <td className="px-3 lg:px-4 py-3 text-xs lg:text-sm">
+                                  {order.phone}
+                                </td>
+                                <td className="px-3 lg:px-4 py-3 text-xs lg:text-sm">
+                                  {order.email}
+                                </td>
+                                <td className="px-3 lg:px-4 py-3 text-xs lg:text-sm">
+                                  {order.numberOfGuests}
+                                </td>
+                                <td className="px-3 lg:px-4 py-3">
+                                  <button
+                                    onClick={() => handleEditOrder(order)}
+                                    className="w-full lg:w-auto px-3 py-1.5 bg-blue-600 text-white text-xs lg:text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                                  >
+                                    تعديل
+                                  </button>
+                                </td>
+                              </>
+                            ) : (
+                              <>
+                                <td className="px-3 lg:px-4 py-3 text-xs lg:text-sm">
+                                  {formatCreatedAt(order.createdAt)}
+                                </td>
+                                <td className="px-3 lg:px-4 py-3 text-xs lg:text-sm">
+                                  {formatDate(order.date)}
+                                </td>
+                                <td className="px-3 lg:px-4 py-3 text-xs lg:text-sm">
+                                  {order.name}
+                                </td>
+                                <td className="px-3 lg:px-4 py-3 text-xs lg:text-sm">
+                                  {order.phoneNumber}
+                                </td>
+                                <td className="px-3 lg:px-4 py-3 text-xs lg:text-sm">
+                                  {order.occasion}
+                                </td>
+                                <td className="px-3 lg:px-4 py-3 text-xs lg:text-sm">
+                                  {order.singerPreference}
+                                </td>
+                                <td className="px-3 lg:px-4 py-3">
+                                  <button
+                                    onClick={() =>
+                                      handleEditSingerBooking(order)
+                                    }
+                                    className="w-full lg:w-auto px-3 py-1.5 bg-blue-600 text-white text-xs lg:text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                                  >
+                                    تعديل
+                                  </button>
+                                </td>
+                              </>
+                            )}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+
                     {(dataType === "hall"
                       ? filteredHallOrders
                       : filteredSingerOrders
-                    ).map((order) => (
-                      <tr key={order.id} className="hover:bg-gray-50">
-                        {dataType === "hall" ? (
-                          <>
-                            <td className="px-4 py-3">{order.eventType}</td>
-                            <td className="px-4 py-3">
-                              {formatDate(order.date)}
-                            </td>
-                            <td className="px-4 py-3">{order.name}</td>
-                            <td className="px-4 py-3">{order.phone}</td>
-                            <td className="px-4 py-3">{order.email}</td>
-                            <td className="px-4 py-3">
-                              {order.numberOfGuests}
-                            </td>
-                            <td className="px-4 py-3">
-                              <button
-                                onClick={() => handleEditOrder(order)}
-                                className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
-                              >
-                                تعديل
-                              </button>
-                            </td>
-                          </>
-                        ) : (
-                          <>
-                            <td className="px-4 py-3">
-                              {formatCreatedAt(order.createdAt)}
-                            </td>
-                            <td className="px-4 py-3">
-                              {formatDate(order.date)}
-                            </td>
-                            <td className="px-4 py-3">{order.name}</td>
-                            <td className="px-4 py-3">{order.phoneNumber}</td>
-                            <td className="px-4 py-3">{order.occasion}</td>
-                            <td className="px-4 py-3">
-                              {order.singerPreference}
-                            </td>
-                            <td className="px-4 py-3">
-                              <button
-                                onClick={() => handleEditSingerBooking(order)}
-                                className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
-                              >
-                                تعديل
-                              </button>
-                            </td>
-                          </>
-                        )}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                {(dataType === "hall"
-                  ? filteredHallOrders
-                  : filteredSingerOrders
-                ).length === 0 && (
-                  <div className="text-center py-12">
-                    <p className="text-gray-500">لا توجد حجوزات مطابقة</p>
+                    ).length === 0 && (
+                      <div className="text-center py-12">
+                        <p className="text-gray-500 text-sm lg:text-base">
+                          لا توجد حجوزات مطابقة
+                        </p>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </div>
