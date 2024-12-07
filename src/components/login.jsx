@@ -145,7 +145,7 @@ const LoginPage = () => {
   };
 
   const handleBack = () => {
-    window.location.href = "/contact";
+    window.location.href = "/home";
   };
 
   const getDirectionClass = () => {
