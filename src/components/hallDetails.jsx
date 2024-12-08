@@ -10,6 +10,7 @@ import {
   Phone,
   Star,
   ChevronLeft,
+  VideoIcon,
   ChevronRight,
 } from "lucide-react";
 
@@ -280,6 +281,15 @@ const HallDetailsPage = () => {
                 >
                   <MapPin className="w-5 h-5" />
                   <span>الموقع على الخريطة</span>
+                </a>
+                <a
+                  href={hall.tiktok}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 text-pink-600 hover:text-pink-700 p-3 bg-pink-50 rounded-xl transition-colors"
+                >
+                  <VideoIcon></VideoIcon>
+                  <span>تابعنا على TikTok</span>
                 </a>
               </div>
             </div>
