@@ -356,7 +356,7 @@ const DetailsPage = () => {
   }, [hallId]);
 
   const handleLogout = () => {
-    navigate("/login");
+    navigate("/home");
     localStorage.clear();
   };
 

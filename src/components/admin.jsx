@@ -153,7 +153,7 @@ const AdminPage = () => {
   };
 
   const handleLogout = () => {
-    navigate("/login");
+    navigate("/home");
     localStorage.clear();
   };
 
