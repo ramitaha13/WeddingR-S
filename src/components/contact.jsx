@@ -352,7 +352,7 @@ const HallsPage = () => {
                       className="text-pink-500 text-sm lg:text-base hover:text-pink-600"
                       onClick={handleSocialClick}
                     >
-                      TikTok
+                      Instagram
                     </a>
                     <a
                       href={hall.locationUrl}
@@ -362,6 +362,15 @@ const HallsPage = () => {
                       onClick={handleSocialClick}
                     >
                       Waze
+                    </a>
+                    <a
+                      href={hall.tiktok}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-pink-500 text-sm lg:text-base hover:text-pink-600"
+                      onClick={handleSocialClick}
+                    >
+                      TikTok
                     </a>
                   </div>
                   <button
