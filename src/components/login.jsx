@@ -157,11 +157,14 @@ const LoginPage = () => {
   };
 
   return (
-    <div dir={getDirectionClass()} className="min-h-screen bg-gray-100">
+    <div
+      dir={getDirectionClass()}
+      className="min-h-screen bg-gradient-to-br from-pink-50 to-white"
+    >
       {/* Mobile Menu Button */}
       <button
         onClick={toggleSidebar}
-        className="md:hidden fixed top-4 right-4 z-50 p-2 bg-pink-600 text-white rounded-md"
+        className="md:hidden fixed top-4 right-4 z-50 p-2 bg-pink-600 text-white rounded-lg shadow-lg hover:bg-pink-700 transition-colors duration-200"
       >
         {isSidebarOpen ? (
           <X className="w-6 h-6" />
@@ -173,51 +176,61 @@ const LoginPage = () => {
       {/* Sidebar */}
       <div
         className={`
-          fixed top-0 ${language === "en" ? "left-0" : "right-0"} h-full w-64 bg-white shadow-lg
+          fixed top-0 ${language === "en" ? "left-0" : "right-0"} h-full w-72 bg-white shadow-xl
           transform transition-transform duration-300 ease-in-out z-40
           ${isSidebarOpen ? "translate-x-0" : language === "en" ? "-translate-x-full" : "translate-x-full"}
           md:translate-x-0
         `}
       >
-        <div className="h-16 bg-pink-600 flex items-center justify-center">
-          <h1 className="text-white text-xl font-bold">{t.title}</h1>
+        <div className="h-20 bg-gradient-to-r from-pink-600 to-pink-500 flex items-center justify-center shadow-md">
+          <h1 className="text-white text-2xl font-bold tracking-wide">
+            {t.title}
+          </h1>
         </div>
 
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-800">{t.welcome}</h2>
+        <div className="p-8">
+          <div className="flex flex-col space-y-4 mb-8">
+            <h2 className="text-2xl font-semibold text-gray-800">
+              {t.welcome}
+            </h2>
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="p-2 border rounded-md"
+              className="w-full p-2 border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
             >
               <option value="ar">العربية</option>
               <option value="en">English</option>
               <option value="he">עברית</option>
             </select>
           </div>
-          <p className="text-gray-600 mb-4">{t.description}</p>
+          <p className="text-gray-600 leading-relaxed">{t.description}</p>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className={`md:${language === "en" ? "ml-64" : "mr-64"} p-6`}>
+      <div className={`md:${language === "en" ? "ml-72" : "mr-72"} p-8`}>
         <div className="flex min-h-screen items-center justify-center">
           <div className="w-full max-w-md">
             <button
               onClick={handleBack}
-              className="mb-6 flex items-center text-gray-600 hover:text-pink-600 transition-colors duration-200"
+              className="mb-8 flex items-center text-gray-600 hover:text-pink-600 transition-colors duration-200 group"
             >
-              <ArrowRight className="w-5 h-5 mx-2" />
-              {t.backToHome}
+              <ArrowRight className="w-5 h-5 mx-2 transform group-hover:translate-x-1 transition-transform duration-200" />
+              <span className="text-lg">{t.backToHome}</span>
             </button>
 
-            <div className="bg-white rounded-lg shadow-lg p-8">
+            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                {t.loginTitle}
+              </h2>
+              <p className="text-gray-600 mb-8">{t.loginSubtitle}</p>
+
               {error && (
-                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg">
                   {error}
                 </div>
               )}
+
               <form onSubmit={handleLogin} className="space-y-6">
                 <div className="space-y-2">
                   <label className="block text-gray-700 font-medium">
@@ -227,7 +240,7 @@ const LoginPage = () => {
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
                     placeholder={t.enterUsername}
                     required
                   />
@@ -240,7 +253,7 @@ const LoginPage = () => {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
                     placeholder={t.enterPassword}
                     required
                   />
@@ -248,7 +261,7 @@ const LoginPage = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-2 bg-pink-600 text-white rounded-md"
+                  className="w-full py-3 bg-gradient-to-r from-pink-600 to-pink-500 text-white rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-medium text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? t.loggingIn : t.loginButton}
                 </button>
