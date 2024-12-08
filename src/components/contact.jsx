@@ -49,7 +49,6 @@ const HallsPage = () => {
     return () => unsubscribe();
   }, []);
 
-  // Get the unique hall names from the weddingHalls array
   const uniqueNames = [...new Set(weddingHalls.map((hall) => hall.name))];
 
   const handleMenuItemClick = (itemName) => {
@@ -75,7 +74,8 @@ const HallsPage = () => {
     window.location.href = "/login";
   };
 
-  const handleBooking = (hall) => {
+  const handleBooking = (e, hall) => {
+    e.stopPropagation(); // Prevent triggering the hall click when clicking the booking button
     navigate("/AppointmentBooking", {
       state: {
         hallName: hall.name,
@@ -87,6 +87,15 @@ const HallsPage = () => {
 
   const handleImageError = (e) => {
     e.target.src = "/api/placeholder/400/320";
+  };
+
+  // New handler for hall click
+  const handleHallClick = (hall) => {
+    navigate(`/hall/${hall.id}`);
+  };
+
+  const handleSocialClick = (e) => {
+    e.stopPropagation(); // Prevent triggering the hall click when clicking social links
   };
 
   const filteredHalls = weddingHalls.filter((hall) => {
@@ -242,46 +251,51 @@ const HallsPage = () => {
                 key={hall.id}
                 className="bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl"
               >
-                <div className="relative h-48 lg:h-64 bg-gray-200">
-                  <img
-                    src={hall.imageUrl || "/api/placeholder/400/320"}
-                    alt={hall.name}
-                    className="w-full h-full object-cover"
-                    onError={handleImageError}
-                  />
-                </div>
-                <div className="p-4 lg:p-6">
-                  <h3 className="text-xl lg:text-2xl font-semibold mb-2 text-pink-900">
-                    {hall.name}
-                  </h3>
-                  <p className="text-gray-600 mb-4 text-sm lg:text-base">
-                    {hall.description}
-                  </p>
-                  <div className="flex items-center mb-2">
-                    <Users className="w-5 h-5 text-pink-500 ml-2" />
-                    <span className="text-sm lg:text-base">
-                      السعة: {hall.capacity} ضيف
-                    </span>
+                <div
+                  onClick={() => handleHallClick(hall)}
+                  className="cursor-pointer"
+                >
+                  <div className="relative h-48 lg:h-64 bg-gray-200">
+                    <img
+                      src={hall.imageUrl || "/api/placeholder/400/320"}
+                      alt={hall.name}
+                      className="w-full h-full object-cover"
+                      onError={handleImageError}
+                    />
                   </div>
-                  <div className="flex items-center mb-2">
-                    <MapPin className="w-5 h-5 text-pink-500 ml-2" />
-                    <span className="text-sm lg:text-base">
-                      {hall.location}
-                    </span>
-                  </div>
-                  <div className="mt-4">
-                    <h4 className="font-semibold mb-2 text-sm lg:text-base">
-                      المميزات:
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {hall.features.map((feature, index) => (
-                        <span
-                          key={index}
-                          className="bg-pink-100 text-pink-800 text-xs lg:text-sm px-2 lg:px-3 py-1 rounded-full"
-                        >
-                          {feature}
-                        </span>
-                      ))}
+                  <div className="p-4 lg:p-6">
+                    <h3 className="text-xl lg:text-2xl font-semibold mb-2 text-pink-900">
+                      {hall.name}
+                    </h3>
+                    <p className="text-gray-600 mb-4 text-sm lg:text-base">
+                      {hall.description}
+                    </p>
+                    <div className="flex items-center mb-2">
+                      <Users className="w-5 h-5 text-pink-500 ml-2" />
+                      <span className="text-sm lg:text-base">
+                        السعة: {hall.capacity} ضيف
+                      </span>
+                    </div>
+                    <div className="flex items-center mb-2">
+                      <MapPin className="w-5 h-5 text-pink-500 ml-2" />
+                      <span className="text-sm lg:text-base">
+                        {hall.location}
+                      </span>
+                    </div>
+                    <div className="mt-4">
+                      <h4 className="font-semibold mb-2 text-sm lg:text-base">
+                        المميزات:
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {hall.features.map((feature, index) => (
+                          <span
+                            key={index}
+                            className="bg-pink-100 text-pink-800 text-xs lg:text-sm px-2 lg:px-3 py-1 rounded-full"
+                          >
+                            {feature}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -292,6 +306,7 @@ const HallsPage = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-pink-500 text-sm lg:text-base hover:text-pink-600"
+                      onClick={handleSocialClick}
                     >
                       Instagram
                     </a>
@@ -300,6 +315,7 @@ const HallsPage = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-pink-500 text-sm lg:text-base hover:text-pink-600"
+                      onClick={handleSocialClick}
                     >
                       TikTok
                     </a>
@@ -308,12 +324,13 @@ const HallsPage = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-pink-500 text-sm lg:text-base hover:text-pink-600"
+                      onClick={handleSocialClick}
                     >
                       Waze
                     </a>
                   </div>
                   <button
-                    onClick={() => handleBooking(hall)}
+                    onClick={(e) => handleBooking(e, hall)}
                     className="flex items-center gap-2 px-3 lg:px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors text-sm lg:text-base"
                   >
                     <Calendar className="w-4 h-4 lg:w-5 lg:h-5" />

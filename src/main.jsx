@@ -36,11 +36,16 @@ import Paymentisokey from "./components/paymentisokey";
 import PaymentForSinger from "./components/PaymentForSinger";
 import PaymentisokeySinger from "./components/paymentisokeySinger";
 import CallUs from "./components/CallUs";
+import HallDetails from "./components/hallDetails";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/hall/:id",
+    element: <HallDetails />,
   },
   {
     path: "/home",
@@ -262,6 +267,7 @@ const router = createBrowserRouter([
     path: "/CallUs",
     element: <CallUs />,
   },
+
   {
     path: "*",
     element: <Home />,
