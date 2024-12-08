@@ -15,6 +15,7 @@ import {
   Share2,
   Copy,
   Check,
+  Mail,
 } from "lucide-react";
 
 const HallDetailsPage = () => {
@@ -44,10 +45,12 @@ const HallDetailsPage = () => {
           instagram: hallData.instagram || "#",
           tiktok: hallData.tiktok || "#",
           locationUrl: hallData.locationUrl || "#",
-          phone: hallData.phone || "",
+          phone: hallData.phoneNumber || "",
           additionalImages: hallData.additionalImages || [],
           priceRange: hallData.priceRange || "",
           availableServices: hallData.availableServices || [],
+          ownerPhone: hallData.ownerPhone || "",
+          ownerEmail: hallData.ownerEmail || "",
         });
       }
       setLoading(false);
@@ -253,18 +256,9 @@ const HallDetailsPage = () => {
             {/* Contact Card */}
             <div className="bg-white rounded-3xl shadow-xl p-8">
               <h2 className="text-xl font-bold text-pink-900 mb-6">
-                معلومات التواصل
+                التعرف على القاعة
               </h2>
               <div className="space-y-4">
-                {hall.phone && (
-                  <a
-                    href={`tel:${hall.phone}`}
-                    className="flex items-center gap-3 text-pink-600 hover:text-pink-700 p-3 bg-pink-50 rounded-xl transition-colors"
-                  >
-                    <Phone className="w-5 h-5" />
-                    <span>{hall.phone}</span>
-                  </a>
-                )}
                 <a
                   href={hall.instagram}
                   target="_blank"
@@ -295,17 +289,32 @@ const HallDetailsPage = () => {
               </div>
             </div>
 
-            {/* Price Range */}
-            {hall.priceRange && (
-              <div className="bg-white rounded-3xl shadow-xl p-8">
-                <h2 className="text-xl font-bold text-pink-900 mb-6">
-                  نطاق السعر
-                </h2>
-                <div className="text-2xl font-bold text-pink-600 text-center p-4 bg-pink-50 rounded-xl">
-                  {hall.priceRange}
-                </div>
+            {/* Owner Contact Information Card */}
+            <div className="bg-white rounded-3xl shadow-xl p-8">
+              <h2 className="text-xl font-bold text-pink-900 mb-6">
+                للتواصل مع صاحب القاعة
+              </h2>
+              <div className="space-y-4">
+                {hall.phone && (
+                  <a
+                    href={`tel:${hall.phone}`}
+                    className="flex items-center gap-3 text-pink-600 hover:text-pink-700 p-3 bg-pink-50 rounded-xl transition-colors"
+                  >
+                    <Phone className="w-5 h-5" />
+                    <span>{hall.phone}</span>
+                  </a>
+                )}
+                {hall.email && (
+                  <a
+                    href={`mailto:${hall.email}`}
+                    className="flex items-center gap-3 text-pink-600 hover:text-pink-700 p-3 bg-pink-50 rounded-xl transition-colors"
+                  >
+                    <Mail className="w-5 h-5" />
+                    <span>{hall.email}</span>
+                  </a>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
