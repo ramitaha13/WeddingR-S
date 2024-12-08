@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import { Users, MapPin, LogIn, Calendar, Search } from "lucide-react";
+import {
+  Users,
+  MapPin,
+  LogIn,
+  Calendar,
+  Search,
+  Share2,
+  Check,
+} from "lucide-react";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { useNavigate } from "react-router-dom";
 
@@ -11,6 +19,7 @@ const HallsPage = () => {
   const [selectedCapacity, setSelectedCapacity] = useState("all");
   const [selectedMenuItem, setSelectedMenuItem] = useState("القاعات");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const menuItems = [
     { id: 1, name: "الرئيسية", icon: "🏠" },
@@ -18,6 +27,25 @@ const HallsPage = () => {
     { id: 3, name: "المطربين", icon: "🎤" },
     { id: 4, name: "تواصل معنا", icon: "📞" },
   ];
+
+  const handleShareLink = async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "دليل قاعات الأفراح",
+          text: "استكشف أفضل قاعات الأفراح في المنطقة",
+          url: url,
+        });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
+  };
 
   useEffect(() => {
     const db = getDatabase();
@@ -75,7 +103,7 @@ const HallsPage = () => {
   };
 
   const handleBooking = (e, hall) => {
-    e.stopPropagation(); // Prevent triggering the hall click when clicking the booking button
+    e.stopPropagation();
     navigate("/AppointmentBooking", {
       state: {
         hallName: hall.name,
@@ -89,13 +117,12 @@ const HallsPage = () => {
     e.target.src = "/api/placeholder/400/320";
   };
 
-  // New handler for hall click
   const handleHallClick = (hall) => {
     navigate(`/hall/${hall.id}`);
   };
 
   const handleSocialClick = (e) => {
-    e.stopPropagation(); // Prevent triggering the hall click when clicking social links
+    e.stopPropagation();
   };
 
   const filteredHalls = weddingHalls.filter((hall) => {
@@ -176,6 +203,23 @@ const HallsPage = () => {
               </div>
             </div>
           ))}
+
+          {/* Share Button */}
+          <div className="mx-4 mb-2 pt-4 border-t border-gray-200">
+            <button
+              onClick={handleShareLink}
+              className="w-full group cursor-pointer rounded-xl overflow-hidden transition-all duration-300 hover:bg-pink-50 p-4 flex items-center gap-3"
+            >
+              {copied ? (
+                <Check className="w-5 h-5 text-pink-600" />
+              ) : (
+                <Share2 className="w-5 h-5 text-pink-600" />
+              )}
+              <span className="font-medium text-gray-600 group-hover:text-pink-600 transition-colors">
+                {copied ? "تم النسخ!" : "مشاركة"}
+              </span>
+            </button>
+          </div>
         </nav>
       </div>
 
@@ -303,15 +347,6 @@ const HallsPage = () => {
                   <div className="flex gap-4">
                     <a
                       href={hall.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-pink-500 text-sm lg:text-base hover:text-pink-600"
-                      onClick={handleSocialClick}
-                    >
-                      Instagram
-                    </a>
-                    <a
-                      href={hall.tiktok}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-pink-500 text-sm lg:text-base hover:text-pink-600"

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LogIn, Menu, X } from "lucide-react";
+import { LogIn, Menu, X, Share2, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const ContactUsScreen = () => {
@@ -8,6 +8,7 @@ const ContactUsScreen = () => {
   const emailAddress = "wedding.rs196@gmail.com";
   const [selectedMenuItem, setSelectedMenuItem] = useState("تواصل معنا");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const menuItems = [
     { id: 1, name: "الرئيسية", icon: "🏠" },
@@ -15,6 +16,25 @@ const ContactUsScreen = () => {
     { id: 3, name: "المطربين", icon: "🎤" },
     { id: 4, name: "تواصل معنا", icon: "📞" },
   ];
+
+  const handleShareLink = async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "تواصل معنا",
+          text: "تواصل معنا للمزيد من المعلومات",
+          url: url,
+        });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
+  };
 
   const handleMenuItemClick = (itemName) => {
     setSelectedMenuItem(itemName);
@@ -107,6 +127,23 @@ const ContactUsScreen = () => {
               </div>
             </div>
           ))}
+
+          {/* Share Button */}
+          <div className="mx-4 mb-2 pt-4 border-t border-gray-200">
+            <button
+              onClick={handleShareLink}
+              className="w-full group cursor-pointer rounded-xl overflow-hidden transition-all duration-300 hover:bg-pink-50 p-4 flex items-center gap-3"
+            >
+              {copied ? (
+                <Check className="w-5 h-5 text-pink-600" />
+              ) : (
+                <Share2 className="w-5 h-5 text-pink-600" />
+              )}
+              <span className="font-medium text-gray-600 group-hover:text-pink-600 transition-colors">
+                {copied ? "تم النسخ!" : "مشاركة"}
+              </span>
+            </button>
+          </div>
         </nav>
       </div>
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { LogIn, Globe } from "lucide-react";
+import { LogIn, Globe, Share2, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
@@ -54,6 +54,8 @@ const useTranslations = () => {
       contactUs: "نرحب بانضمامك إلى شبكتنا المتميزة. للتواصل معنا:",
       language: "اللغة",
       callUs: "تواصل معنا",
+      share: "مشاركة",
+      copied: "تم النسخ!",
     },
     he: {
       home: "דף הבית",
@@ -75,6 +77,8 @@ const useTranslations = () => {
       contactUs: "אנו מזמינים אותך להצטרף לרשת המצוינת שלנו. ליצירת קשר:",
       language: "שפה",
       callUs: "צור קשר",
+      share: "שתף",
+      copied: "הועתק!",
     },
     en: {
       home: "Home",
@@ -98,6 +102,8 @@ const useTranslations = () => {
         "We welcome you to join our distinguished network. Contact us:",
       language: "Language",
       callUs: "Contact Us",
+      share: "Share",
+      copied: "Copied!",
     },
   };
 
@@ -113,6 +119,7 @@ const HomePage = () => {
   const [selectedMenuItem, setSelectedMenuItem] = useState("home");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { t, setCurrentLang, isRTL, translations } = useTranslations();
 
   const images = [
@@ -130,6 +137,25 @@ const HomePage = () => {
     return () => clearInterval(interval);
   }, [images.length]);
 
+  const handleShareLink = async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: t.title,
+          text: t.heroDescription,
+          url: url,
+        });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
+  };
+
   const handleCardClick = (type) => {
     switch (type) {
       case "halls":
@@ -138,7 +164,6 @@ const HomePage = () => {
       case "singers":
         navigate("/singersPage");
         break;
-      // Default case handles gallery or other cards
       default:
         break;
     }
@@ -189,7 +214,7 @@ const HomePage = () => {
         </button>
       </div>
 
-      {/* Sidebar - Desktop and Mobile */}
+      {/* Sidebar */}
       <div
         className={`${
           isMobileMenuOpen
@@ -237,6 +262,23 @@ const HomePage = () => {
               </div>
             </div>
           ))}
+
+          {/* Share Button */}
+          <div className="mx-4 mb-2 pt-4 border-t border-gray-200">
+            <button
+              onClick={handleShareLink}
+              className="w-full group cursor-pointer rounded-xl overflow-hidden transition-all duration-300 hover:bg-pink-50 p-4 flex items-center gap-3"
+            >
+              {copied ? (
+                <Check className="w-5 h-5 text-pink-600" />
+              ) : (
+                <Share2 className="w-5 h-5 text-pink-600" />
+              )}
+              <span className="font-medium text-gray-600 group-hover:text-pink-600 transition-colors">
+                {copied ? t.copied : t.share}
+              </span>
+            </button>
+          </div>
 
           {/* Language Selector in Sidebar */}
           <div className="mx-4 mb-2 pt-4 border-t border-gray-200">

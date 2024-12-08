@@ -16,6 +16,7 @@ import {
   Copy,
   Check,
   Mail,
+  Home,
 } from "lucide-react";
 
 const HallDetailsPage = () => {
@@ -92,6 +93,10 @@ const HallDetailsPage = () => {
     });
   };
 
+  const handleHomeClick = () => {
+    navigate("/");
+  };
+
   const nextImage = () => {
     setCurrentImageIndex((prev) =>
       prev === (hall?.additionalImages?.length || 0) ? 0 : prev + 1,
@@ -140,13 +145,22 @@ const HallDetailsPage = () => {
         {/* Navigation */}
         <div className="absolute top-0 right-0 left-0 p-4">
           <div className="container mx-auto flex items-center justify-between">
-            <button
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-2 px-4 py-2 bg-white/90 text-pink-600 rounded-lg hover:bg-white transition-colors"
-            >
-              <ArrowRight className="w-5 h-5" />
-              العودة
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-2 px-4 py-2 bg-white/90 text-pink-600 rounded-lg hover:bg-white transition-colors"
+              >
+                <ArrowRight className="w-5 h-5" />
+                العودة
+              </button>
+              <button
+                onClick={handleHomeClick}
+                className="flex items-center gap-2 px-4 py-2 bg-white/90 text-pink-600 rounded-lg hover:bg-white transition-colors"
+              >
+                <Home className="w-5 h-5" />
+                الرئيسية
+              </button>
+            </div>
             <button
               onClick={handleShareLink}
               className="flex items-center gap-2 px-4 py-2 bg-white/90 text-pink-600 rounded-lg hover:bg-white transition-colors"
