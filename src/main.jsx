@@ -38,7 +38,7 @@ import PaymentisokeySinger from "./components/paymentisokeySinger";
 import CallUs from "./components/CallUs";
 import HallDetails from "./components/hallDetails";
 
-const router = createBrowserRouter([
+const routes = [
   {
     path: "/",
     element: <Home />,
@@ -114,14 +114,6 @@ const router = createBrowserRouter([
   {
     path: "/singersPage",
     element: <SingersPage />,
-  },
-  {
-    path: "/newaccount",
-    element: (
-      <ProtectedRoute>
-        <Newaccount />
-      </ProtectedRoute>
-    ),
   },
   {
     path: "/bookingSinger",
@@ -267,12 +259,22 @@ const router = createBrowserRouter([
     path: "/CallUs",
     element: <CallUs />,
   },
-
   {
     path: "*",
     element: <Home />,
   },
-]);
+];
+
+const router = createBrowserRouter(routes, {
+  future: {
+    v7_startTransition: true,
+    v7_relativeSplatPath: true,
+    v7_fetcherPersist: true,
+    v7_normalizeFormMethod: true,
+    v7_partialHydration: true,
+    v7_skipActionErrorRevalidation: true,
+  },
+});
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
