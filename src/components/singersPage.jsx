@@ -66,7 +66,7 @@ const SingersPage = () => {
         setTimeout(() => setCopied(false), 2000);
       }
     } catch (error) {
-      console.error("Error sharing:", error);
+      console.log("Error sharing:", error);
     }
   };
 
