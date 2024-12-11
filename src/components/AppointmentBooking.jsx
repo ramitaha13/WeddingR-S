@@ -132,7 +132,7 @@ const AppointmentBooking = () => {
     >
       <div className="max-w-2xl mx-auto">
         <button
-          onClick={() => navigate("/contact")}
+          onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-6 transition-colors duration-300"
         >
           العودة إلى القائمة
