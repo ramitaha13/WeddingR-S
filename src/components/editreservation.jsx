@@ -262,17 +262,6 @@ const EditReservation = () => {
   return (
     <div dir="rtl" className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-8">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center text-gray-600 hover:text-pink-600 transition-colors duration-200 bg-white rounded-lg px-4 py-2 shadow-sm hover:shadow-md"
-          >
-            <ArrowRight className="w-5 h-5 ml-2" />
-            <span>رجوع</span>
-          </button>
-          <h1 className="text-3xl font-bold text-gray-900">تعديل الحجز</h1>
-        </div>
-
         {error && (
           <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
             <div className="flex items-center">
