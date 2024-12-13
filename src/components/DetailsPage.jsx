@@ -11,7 +11,8 @@ import {
   AlertCircle,
   Menu,
   X,
-  ChevronDown,
+  ChevronRight, // Add this
+  ChevronLeft, // Add this
   Search,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -490,25 +491,28 @@ const DetailsPage = () => {
     );
   }
 
-  // MobileNav Component for small screens
-  const MobileNav = ({
-    isOpen,
-    onClose,
-    onNavigate,
-    onLogout,
-    onCheckDate,
-  }) => {
+  const Sidebar = ({ isOpen, onToggle }) => {
     return (
-      <div
-        className={`fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-      >
+      <>
+        {/* Desktop Sidebar */}
         <div
-          className={`fixed inset-y-0 right-0 w-64 bg-white shadow-xl transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+          className={`hidden lg:block fixed inset-y-0 right-0 bg-white shadow-xl transition-all duration-300 ease-in-out ${
+            isOpen ? "w-64" : "w-20"
+          }`}
         >
-          <div className="h-16 bg-gradient-to-r from-pink-600 to-pink-700 flex items-center justify-between px-4">
-            <h1 className="text-white text-xl font-bold">لوحة التحكم</h1>
-            <button onClick={onClose}>
-              <X className="h-6 w-6 text-white" />
+          <div className="h-16 bg-gradient-to-r from-pink-600 to-pink-700 flex items-center px-4 justify-between">
+            {isOpen && (
+              <h1 className="text-white text-xl font-bold">لوحة التحكم</h1>
+            )}
+            <button
+              onClick={onToggle}
+              className="p-2 rounded-lg hover:bg-pink-700 transition-colors"
+            >
+              {isOpen ? (
+                <ChevronRight className="h-6 w-6 text-white" />
+              ) : (
+                <ChevronLeft className="h-6 w-6 text-white" />
+              )}
             </button>
           </div>
 
@@ -518,34 +522,156 @@ const DetailsPage = () => {
               {
                 icon: Star,
                 label: "احصائيات",
-                action: () => onNavigate("statistics"),
+                action: () => handleNavigation("statistics"),
               },
-              { icon: Clock, label: "التحقق من التاريخ", action: onCheckDate },
+              {
+                icon: Clock,
+                label: "التحقق من التاريخ",
+                action: handleCheckDate,
+              },
               {
                 icon: LogOut,
                 label: "تسجيل الخروج",
-                action: onLogout,
+                action: handleLogout,
                 className: "text-red-600 hover:bg-red-50",
               },
             ].map((item, index) => (
               <button
                 key={index}
                 onClick={item.action}
-                className={`w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-lg transition-colors ${item.className || "text-gray-700 hover:bg-pink-50 hover:text-pink-600"}`}
+                className={`w-full flex items-center ${
+                  isOpen ? "space-x-3 space-x-reverse" : "justify-center"
+                } px-4 py-3 rounded-lg transition-colors ${
+                  item.className ||
+                  "text-gray-700 hover:bg-pink-50 hover:text-pink-600"
+                }`}
               >
                 <item.icon className="w-5 h-5" />
-                <span className="font-medium">{item.label}</span>
+                {isOpen && <span className="font-medium">{item.label}</span>}
               </button>
             ))}
           </nav>
         </div>
-      </div>
+
+        {/* Mobile Sidebar Overlay */}
+        <div
+          className={`fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity lg:hidden ${
+            isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <div
+            className={`fixed inset-y-0 right-0 w-64 bg-white shadow-xl transform transition-transform duration-300 ${
+              isOpen ? "translate-x-0" : "translate-x-full"
+            }`}
+          >
+            <div className="h-16 bg-gradient-to-r from-pink-600 to-pink-700 flex items-center justify-between px-4">
+              <h1 className="text-white text-xl font-bold">لوحة التحكم</h1>
+              <button onClick={() => setSidebarOpen(false)}>
+                <X className="h-6 w-6 text-white" />
+              </button>
+            </div>
+
+            <nav className="p-4 space-y-2">
+              {[
+                { icon: Calendar, label: "الحجوزات", action: () => {} },
+                {
+                  icon: Star,
+                  label: "احصائيات",
+                  action: () => handleNavigation("statistics"),
+                },
+                {
+                  icon: Clock,
+                  label: "التحقق من التاريخ",
+                  action: handleCheckDate,
+                },
+                {
+                  icon: LogOut,
+                  label: "تسجيل الخروج",
+                  action: handleLogout,
+                  className: "text-red-600 hover:bg-red-50",
+                },
+              ].map((item, index) => (
+                <button
+                  key={index}
+                  onClick={item.action}
+                  className={`w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-lg transition-colors ${
+                    item.className ||
+                    "text-gray-700 hover:bg-pink-50 hover:text-pink-600"
+                  }`}
+                >
+                  <item.icon className="w-5 h-5" />
+                  <span className="font-medium">{item.label}</span>
+                </button>
+              ))}
+            </nav>
+          </div>
+        </div>
+      </>
     );
   };
 
   return (
     <div dir="rtl" className="min-h-screen bg-gray-50">
-      {/* Mobile Navigation */}
+      {/* Sidebar */}
+      <div
+        className={`hidden lg:block fixed inset-y-0 right-0 bg-white shadow-xl transition-all duration-300 ease-in-out ${
+          sidebarOpen ? "w-64" : "w-20"
+        }`}
+      >
+        <div className="h-16 bg-gradient-to-r from-pink-600 to-pink-700 flex items-center px-4 justify-between">
+          {sidebarOpen && (
+            <h1 className="text-white text-xl font-bold">لوحة التحكم</h1>
+          )}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 rounded-lg hover:bg-pink-700 transition-colors"
+          >
+            {sidebarOpen ? (
+              <ChevronRight className="h-6 w-6 text-white" />
+            ) : (
+              <ChevronLeft className="h-6 w-6 text-white" />
+            )}
+          </button>
+        </div>
+
+        <nav className="p-4 space-y-2">
+          {[
+            { icon: Calendar, label: "الحجوزات", action: () => {} },
+            {
+              icon: Star,
+              label: "احصائيات",
+              action: () => handleNavigation("statistics"),
+            },
+            {
+              icon: Clock,
+              label: "التحقق من التاريخ",
+              action: handleCheckDate,
+            },
+            {
+              icon: LogOut,
+              label: "تسجيل الخروج",
+              action: handleLogout,
+              className: "text-red-600 hover:bg-red-50",
+            },
+          ].map((item, index) => (
+            <button
+              key={index}
+              onClick={item.action}
+              className={`w-full flex items-center ${
+                sidebarOpen ? "space-x-3 space-x-reverse" : "justify-center"
+              } px-4 py-3 rounded-lg transition-colors ${
+                item.className ||
+                "text-gray-700 hover:bg-pink-50 hover:text-pink-600"
+              }`}
+            >
+              <item.icon className="w-5 h-5" />
+              {sidebarOpen && <span className="font-medium">{item.label}</span>}
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* Mobile Sidebar */}
       <div
         className={`fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity lg:hidden ${
           sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -599,49 +725,12 @@ const DetailsPage = () => {
         </div>
       </div>
 
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:block fixed inset-y-0 right-0 w-64 bg-white shadow-xl">
-        <div className="h-16 bg-gradient-to-r from-pink-600 to-pink-700 flex items-center px-4">
-          <h1 className="text-white text-xl font-bold">لوحة التحكم</h1>
-        </div>
-
-        <nav className="p-4 space-y-2">
-          {[
-            { icon: Calendar, label: "الحجوزات", action: () => {} },
-            {
-              icon: Star,
-              label: "احصائيات",
-              action: () => handleNavigation("statistics"),
-            },
-            {
-              icon: Clock,
-              label: "التحقق من التاريخ",
-              action: handleCheckDate,
-            },
-            {
-              icon: LogOut,
-              label: "تسجيل الخروج",
-              action: handleLogout,
-              className: "text-red-600 hover:bg-red-50",
-            },
-          ].map((item, index) => (
-            <button
-              key={index}
-              onClick={item.action}
-              className={`w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-lg transition-colors ${
-                item.className ||
-                "text-gray-700 hover:bg-pink-50 hover:text-pink-600"
-              }`}
-            >
-              <item.icon className="w-5 h-5" />
-              <span className="font-medium">{item.label}</span>
-            </button>
-          ))}
-        </nav>
-      </div>
-
       {/* Main Content */}
-      <div className="lg:mr-64">
+      <div
+        className={`transition-all duration-300 ${
+          sidebarOpen ? "lg:mr-64" : "lg:mr-20"
+        }`}
+      >
         {/* Header */}
         <header className="bg-white shadow-sm border-b border-gray-200 h-16 flex items-center justify-between px-4">
           <button
