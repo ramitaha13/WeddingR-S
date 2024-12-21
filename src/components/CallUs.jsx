@@ -1,20 +1,115 @@
 import { useState } from "react";
-import { LogIn, Menu, X, Share2, Check } from "lucide-react";
+import { LogIn, Menu, X, Share2, Check, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
+
+const LanguageSelector = ({ onLanguageChange, translations }) => {
+  return (
+    <div className="relative group">
+      <button className="flex items-center gap-2 text-pink-600 hover:text-pink-700 transition-colors">
+        <Globe className="w-5 h-5" />
+        <span className="text-sm">Language</span>
+      </button>
+      <div className="absolute top-full left-0 mt-2 bg-white shadow-lg rounded-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+        {Object.keys(translations).map((lang) => (
+          <button
+            key={lang}
+            onClick={() => onLanguageChange(lang)}
+            className="block w-full px-4 py-2 text-left hover:bg-pink-50 transition-colors"
+          >
+            {lang === "ar" ? "العربية" : lang === "he" ? "עברית" : "English"}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+LanguageSelector.propTypes = {
+  onLanguageChange: PropTypes.func.isRequired,
+  translations: PropTypes.objectOf(PropTypes.objectOf(PropTypes.string))
+    .isRequired,
+};
+
+const useTranslations = () => {
+  const translations = {
+    ar: {
+      home: "الرئيسية",
+      halls: "القاعات",
+      singers: "المطربين",
+      contactUs: "تواصل معنا",
+      login: "تسجيل الدخول",
+      share: "مشاركة",
+      copied: "تم النسخ!",
+      title: "تواصل معنا",
+      howCanWeHelp: "كيف يمكننا مساعدتك؟",
+      helpText:
+        "نحن هنا دائمًا للمساعدة. يمكنك الاتصال بنا أو إرسال بريد إلكتروني إذا كان لديك أي استفسارات أو طلبات.",
+      callUs: "اتصل بنا",
+      emailUs: "راسلنا",
+      reminder: "تذكير",
+      reminderText:
+        "نحن نستجيب لجميع الرسائل والمكالمات في أسرع وقت ممكن. نقدر تواصلك ونسعى دائمًا لتقديم أفضل خدمة ممكنة.",
+    },
+    he: {
+      home: "דף הבית",
+      halls: "אולמות",
+      singers: "זמרים",
+      contactUs: "צור קשר",
+      login: "התחברות",
+      share: "שתף",
+      copied: "הועתק!",
+      title: "צור קשר",
+      howCanWeHelp: "איך נוכל לעזור?",
+      helpText:
+        'אנחנו כאן תמיד לעזור. ניתן להתקשר אלינו או לשלוח דוא"ל בכל שאלה או בקשה.',
+      callUs: "התקשר אלינו",
+      emailUs: "שלח לנו מייל",
+      reminder: "תזכורת",
+      reminderText:
+        "אנו מגיבים לכל ההודעות והשיחות בהקדם האפשרי. אנו מעריכים את פנייתך ותמיד שואפים לספק את השירות הטוב ביותר.",
+    },
+    en: {
+      home: "Home",
+      halls: "Halls",
+      singers: "Singers",
+      contactUs: "Contact Us",
+      login: "Login",
+      share: "Share",
+      copied: "Copied!",
+      title: "Contact Us",
+      howCanWeHelp: "How Can We Help?",
+      helpText:
+        "We're always here to help. You can call us or send an email if you have any questions or requests.",
+      callUs: "Call Us",
+      emailUs: "Email Us",
+      reminder: "Reminder",
+      reminderText:
+        "We respond to all messages and calls as quickly as possible. We value your communication and always strive to provide the best possible service.",
+    },
+  };
+
+  const [currentLang, setCurrentLang] = useState("ar");
+  const t = translations[currentLang];
+  const isRTL = currentLang === "ar" || currentLang === "he";
+
+  return { t, currentLang, setCurrentLang, isRTL, translations };
+};
 
 const ContactUsScreen = () => {
   const navigate = useNavigate();
   const phoneNumber = "0537333343";
   const emailAddress = "wedding.rs196@gmail.com";
-  const [selectedMenuItem, setSelectedMenuItem] = useState("تواصل معنا");
+  const [selectedMenuItem, setSelectedMenuItem] = useState("contactUs");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const { t, setCurrentLang, isRTL, translations } = useTranslations();
 
   const menuItems = [
-    { id: 1, name: "الرئيسية", icon: "🏠" },
-    { id: 2, name: "القاعات", icon: "🏰" },
-    { id: 3, name: "المطربين", icon: "🎤" },
-    { id: 4, name: "تواصل معنا", icon: "📞" },
+    { id: 1, name: "home", icon: "🏠" },
+    { id: 2, name: "halls", icon: "🏰" },
+    { id: 3, name: "singers", icon: "🎤" },
+    { id: 4, name: "contactUs", icon: "📞" },
   ];
 
   const handleShareLink = async () => {
@@ -22,8 +117,8 @@ const ContactUsScreen = () => {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: "تواصل معنا",
-          text: "تواصل معنا للمزيد من المعلومات",
+          title: t.title,
+          text: t.helpText,
           url: url,
         });
       } else {
@@ -40,13 +135,13 @@ const ContactUsScreen = () => {
     setSelectedMenuItem(itemName);
     setIsMobileMenuOpen(false);
     switch (itemName) {
-      case "الرئيسية":
+      case "home":
         navigate("/");
         break;
-      case "القاعات":
+      case "halls":
         navigate("/contact");
         break;
-      case "المطربين":
+      case "singers":
         navigate("/singersPage");
         break;
     }
@@ -66,7 +161,7 @@ const ContactUsScreen = () => {
 
   return (
     <div
-      dir="rtl"
+      dir={isRTL ? "rtl" : "ltr"}
       className="min-h-screen bg-gradient-to-b from-pink-50 to-white"
     >
       {/* Mobile Menu Button */}
@@ -83,17 +178,21 @@ const ContactUsScreen = () => {
         </button>
       </div>
 
-      {/* Sidebar - Desktop and Mobile */}
+      {/* Sidebar */}
       <div
         className={`${
           isMobileMenuOpen
             ? "translate-x-0"
-            : "translate-x-full lg:translate-x-0"
-        } transition-transform duration-300 w-72 bg-white shadow-xl fixed right-0 h-full z-40 lg:z-30`}
+            : isRTL
+              ? "translate-x-full lg:translate-x-0"
+              : "-translate-x-full lg:translate-x-0"
+        } transition-transform duration-300 w-72 bg-white shadow-xl fixed ${
+          isRTL ? "right-0" : "left-0"
+        } h-full z-40 lg:z-30`}
       >
         <div className="h-24 bg-gradient-to-r from-pink-600 to-pink-500 flex items-center justify-center rounded-bl-3xl">
           <h1 className="text-white text-xl lg:text-2xl font-bold">
-            تواصل معنا
+            {t.title}
           </h1>
         </div>
         <nav className="mt-8">
@@ -122,7 +221,7 @@ const ContactUsScreen = () => {
                       : "text-gray-600"
                   }`}
                 >
-                  {item.name}
+                  {t[item.name]}
                 </span>
               </div>
             </div>
@@ -140,22 +239,34 @@ const ContactUsScreen = () => {
                 <Share2 className="w-5 h-5 text-pink-600" />
               )}
               <span className="font-medium text-gray-600 group-hover:text-pink-600 transition-colors">
-                {copied ? "تم النسخ!" : "مشاركة"}
+                {copied ? t.copied : t.share}
               </span>
             </button>
+          </div>
+
+          {/* Language Selector */}
+          <div className="mx-4 mb-2 pt-4 border-t border-gray-200">
+            <div className="p-4">
+              <LanguageSelector
+                onLanguageChange={setCurrentLang}
+                translations={translations}
+              />
+            </div>
           </div>
         </nav>
       </div>
 
       {/* Main Content Area */}
-      <div className="lg:mr-72 flex-1 transition-all duration-300">
+      <div
+        className={`${isRTL ? "lg:mr-72" : "lg:ml-72"} flex-1 transition-all duration-300`}
+      >
         {/* Header */}
         <header className="h-24 bg-white shadow-lg flex items-center justify-end px-4 lg:px-8">
           <div
             onClick={handleLogin}
             className="flex items-center gap-3 text-pink-600 hover:text-pink-700 cursor-pointer group transition-all duration-300"
           >
-            <span className="text-base lg:text-lg">تسجيل الدخول</span>
+            <span className="text-base lg:text-lg">{t.login}</span>
             <LogIn className="w-5 h-5 transition-transform group-hover:translate-x-1" />
           </div>
         </header>
@@ -166,12 +277,9 @@ const ContactUsScreen = () => {
           <div className="bg-white rounded-2xl shadow-xl p-6 lg:p-8 mb-8 transform hover:scale-[1.02] transition-transform duration-300">
             <div className="flex flex-col gap-6">
               <h2 className="text-2xl lg:text-3xl font-bold text-pink-900">
-                كيف يمكننا مساعدتك؟
+                {t.howCanWeHelp}
               </h2>
-              <p className="text-gray-600">
-                نحن هنا دائمًا للمساعدة. يمكنك الاتصال بنا أو إرسال بريد
-                إلكتروني إذا كان لديك أي استفسارات أو طلبات.
-              </p>
+              <p className="text-gray-600">{t.helpText}</p>
             </div>
           </div>
 
@@ -185,7 +293,7 @@ const ContactUsScreen = () => {
               >
                 <div className="text-4xl mb-4">📱</div>
                 <h3 className="text-xl font-bold text-pink-600 mb-2">
-                  اتصل بنا
+                  {t.callUs}
                 </h3>
                 <p className="text-gray-600">{phoneNumber}</p>
               </button>
@@ -198,7 +306,9 @@ const ContactUsScreen = () => {
                 className="w-full p-6 text-right"
               >
                 <div className="text-4xl mb-4">📧</div>
-                <h3 className="text-xl font-bold text-pink-600 mb-2">راسلنا</h3>
+                <h3 className="text-xl font-bold text-pink-600 mb-2">
+                  {t.emailUs}
+                </h3>
                 <p className="text-gray-600">{emailAddress}</p>
               </button>
             </div>
@@ -207,11 +317,10 @@ const ContactUsScreen = () => {
           {/* Note Section */}
           <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8">
             <h3 className="text-xl font-bold text-pink-600 mb-4 text-right">
-              تذكير
+              {t.reminder}
             </h3>
             <p className="text-gray-600 text-right leading-relaxed">
-              نحن نستجيب لجميع الرسائل والمكالمات في أسرع وقت ممكن. نقدر تواصلك
-              ونسعى دائمًا لتقديم أفضل خدمة ممكنة.
+              {t.reminderText}
             </p>
           </div>
         </main>

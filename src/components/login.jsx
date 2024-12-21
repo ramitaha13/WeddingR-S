@@ -1,69 +1,106 @@
 import { useState } from "react";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight, Menu, X, Globe, Eye, EyeOff } from "lucide-react";
+import PropTypes from "prop-types";
 
-const translations = {
-  ar: {
-    title: "قاعات الأفراح",
-    welcome: "مرحباً بكم",
-    description:
-      "قم بتسجيل الدخول للوصول إلى لوحة التحكم الخاصة بك وإدارة حجوزات قاعات الأفراح.",
-    manageBookings: "إدارة الحجوزات",
-    viewReports: "عرض التقارير",
-    manageHalls: "إدارة القاعات",
-    backToHome: "العودة للرئيسية",
-    loginTitle: "تسجيل الدخول",
-    loginSubtitle: "قم بتسجيل الدخول لإدارة حساب قاعات الأفراح",
-    username: "اسم المستخدم",
-    password: "كلمة المرور",
-    enterUsername: "أدخل اسم المستخدم",
-    enterPassword: "أدخل كلمة المرور",
-    loginButton: "تسجيل الدخول",
-    loggingIn: "جاري تسجيل الدخول...",
-    connectionError: "خطأ في الاتصال",
-    invalidCredentials: "اسم المستخدم أو كلمة المرور غير صحيحة",
-    loginError: "حدث خطأ في تسجيل الدخول. يرجى المحاولة مرة أخرى",
-  },
-  en: {
-    title: "Wedding Halls",
-    welcome: "Welcome",
-    description:
-      "Login to access your dashboard and manage wedding hall bookings.",
-    manageBookings: "Manage Bookings",
-    viewReports: "View Reports",
-    manageHalls: "Manage Halls",
-    backToHome: "Back to Home",
-    loginTitle: "Login",
-    loginSubtitle: "Sign in to manage your wedding halls account",
-    username: "Username",
-    password: "Password",
-    enterUsername: "Enter username",
-    enterPassword: "Enter password",
-    loginButton: "Login",
-    loggingIn: "Logging in...",
-    connectionError: "Connection error",
-    invalidCredentials: "Invalid username or password",
-    loginError: "Login error. Please try again",
-  },
-  he: {
-    title: "אולמות חתונה",
-    welcome: "ברוכים הבאים",
-    description: "התחבר כדי לגשת ללוח הבקרה שלך ולנהל הזמנות אולם חתונות.",
-    manageBookings: "ניהול הזמנות",
-    viewReports: "צפה בדוחות",
-    manageHalls: "ניהול אולמות",
-    backToHome: "חזרה לדף הבית",
-    loginTitle: "התחברות",
-    loginSubtitle: "התחבר כדי לנהל את חשבון אולמות החתונה שלך",
-    username: "שם משתמש",
-    password: "סיסמה",
-    enterUsername: "הזן שם משתמש",
-    enterPassword: "הזן סיסמה",
-    loginButton: "התחברות",
-    loggingIn: "מתחבר...",
-    connectionError: "שגיאת חיבור",
-    invalidCredentials: "שם משתמש או סיסמה לא חוקיים",
-    loginError: "שגיאת התחברות. אנא נסה שוב",
-  },
+const LanguageSelector = ({ onLanguageChange, translations }) => {
+  return (
+    <div className="relative group">
+      <button className="flex items-center gap-2 text-pink-600 hover:text-pink-700 transition-colors">
+        <Globe className="w-5 h-5" />
+        <span className="text-sm">Language</span>
+      </button>
+      <div className="absolute top-full left-0 mt-2 bg-white shadow-lg rounded-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+        {Object.keys(translations).map((lang) => (
+          <button
+            key={lang}
+            onClick={() => onLanguageChange(lang)}
+            className="block w-full px-4 py-2 text-left hover:bg-pink-50 transition-colors"
+          >
+            {lang === "ar" ? "العربية" : lang === "he" ? "עברית" : "English"}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+LanguageSelector.propTypes = {
+  onLanguageChange: PropTypes.func.isRequired,
+  translations: PropTypes.objectOf(PropTypes.objectOf(PropTypes.string))
+    .isRequired,
+};
+
+const useTranslations = () => {
+  const translations = {
+    ar: {
+      title: "قاعات الأفراح",
+      welcome: "مرحباً بكم",
+      description:
+        "قم بتسجيل الدخول للوصول إلى لوحة التحكم الخاصة بك وإدارة حجوزات قاعات الأفراح.",
+      manageBookings: "إدارة الحجوزات",
+      viewReports: "عرض التقارير",
+      manageHalls: "إدارة القاعات",
+      backToHome: "العودة للرئيسية",
+      loginTitle: "تسجيل الدخول",
+      loginSubtitle: "قم بتسجيل الدخول لإدارة حساب قاعات الأفراح",
+      username: "اسم المستخدم",
+      password: "كلمة المرور",
+      enterUsername: "أدخل اسم المستخدم",
+      enterPassword: "أدخل كلمة المرور",
+      loginButton: "تسجيل الدخول",
+      loggingIn: "جاري تسجيل الدخول...",
+      connectionError: "خطأ في الاتصال",
+      invalidCredentials: "اسم المستخدم أو كلمة المرور غير صحيحة",
+      loginError: "حدث خطأ في تسجيل الدخول. يرجى المحاولة مرة أخرى",
+    },
+    he: {
+      title: "אולמות חתונה",
+      welcome: "ברוכים הבאים",
+      description: "התחבר כדי לגשת ללוח הבקרה שלך ולנהל הזמנות אולם חתונות.",
+      manageBookings: "ניהול הזמנות",
+      viewReports: "צפה בדוחות",
+      manageHalls: "ניהול אולמות",
+      backToHome: "חזרה לדף הבית",
+      loginTitle: "התחברות",
+      loginSubtitle: "התחבר כדי לנהל את חשבון אולמות החתונה שלך",
+      username: "שם משתמש",
+      password: "סיסמה",
+      enterUsername: "הזן שם משתמש",
+      enterPassword: "הזן סיסמה",
+      loginButton: "התחברות",
+      loggingIn: "מתחבר...",
+      connectionError: "שגיאת חיבור",
+      invalidCredentials: "שם משתמש או סיסמה לא חוקיים",
+      loginError: "שגיאת התחברות. אנא נסה שוב",
+    },
+    en: {
+      title: "Wedding Halls",
+      welcome: "Welcome",
+      description:
+        "Login to access your dashboard and manage wedding hall bookings.",
+      manageBookings: "Manage Bookings",
+      viewReports: "View Reports",
+      manageHalls: "Manage Halls",
+      backToHome: "Back to Home",
+      loginTitle: "Login",
+      loginSubtitle: "Sign in to manage your wedding halls account",
+      username: "Username",
+      password: "Password",
+      enterUsername: "Enter username",
+      enterPassword: "Enter password",
+      loginButton: "Login",
+      loggingIn: "Logging in...",
+      connectionError: "Connection error",
+      invalidCredentials: "Invalid username or password",
+      loginError: "Login error. Please try again",
+    },
+  };
+
+  const [currentLang, setCurrentLang] = useState("ar");
+  const t = translations[currentLang];
+  const isRTL = currentLang === "ar" || currentLang === "he";
+
+  return { t, currentLang, setCurrentLang, isRTL, translations };
 };
 
 const LoginPage = () => {
@@ -71,12 +108,12 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [language, setLanguage] = useState("ar");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const { t, setCurrentLang, isRTL, translations } = useTranslations();
+
   const ADMIN_USERNAME = "admin";
   const ADMIN_PASSWORD = "AdminA123";
-
-  const t = translations[language];
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -148,17 +185,13 @@ const LoginPage = () => {
     window.location.href = "/home";
   };
 
-  const getDirectionClass = () => {
-    return language === "ar" || language === "he" ? "rtl" : "ltr";
-  };
-
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
   return (
     <div
-      dir={getDirectionClass()}
+      dir={isRTL ? "rtl" : "ltr"}
       className="min-h-screen bg-gradient-to-br from-pink-50 to-white"
     >
       {/* Mobile Menu Button */}
@@ -176,9 +209,9 @@ const LoginPage = () => {
       {/* Sidebar */}
       <div
         className={`
-          fixed top-0 ${language === "en" ? "left-0" : "right-0"} h-full w-72 bg-white shadow-xl
+          fixed top-0 ${isRTL ? "right-0" : "left-0"} h-full w-72 bg-white shadow-xl
           transform transition-transform duration-300 ease-in-out z-40
-          ${isSidebarOpen ? "translate-x-0" : language === "en" ? "-translate-x-full" : "translate-x-full"}
+          ${isSidebarOpen ? "translate-x-0" : isRTL ? "translate-x-full" : "-translate-x-full"}
           md:translate-x-0
         `}
       >
@@ -193,22 +226,19 @@ const LoginPage = () => {
             <h2 className="text-2xl font-semibold text-gray-800">
               {t.welcome}
             </h2>
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="w-full p-2 border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
-            >
-              <option value="ar">العربية</option>
-              <option value="en">English</option>
-              <option value="he">עברית</option>
-            </select>
+            <div className="w-full">
+              <LanguageSelector
+                onLanguageChange={setCurrentLang}
+                translations={translations}
+              />
+            </div>
           </div>
           <p className="text-gray-600 leading-relaxed">{t.description}</p>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className={`md:${language === "en" ? "ml-72" : "mr-72"} p-8`}>
+      <div className={`md:${isRTL ? "mr-72" : "ml-72"} p-8`}>
         <div className="flex min-h-screen items-center justify-center">
           <div className="w-full max-w-md">
             <button
@@ -249,14 +279,27 @@ const LoginPage = () => {
                   <label className="block text-gray-700 font-medium">
                     {t.password}
                   </label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
-                    placeholder={t.enterPassword}
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
+                      placeholder={t.enterPassword}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className={`absolute ${isRTL ? "left-3" : "right-3"} top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none`}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
                 </div>
                 <button
                   type="submit"

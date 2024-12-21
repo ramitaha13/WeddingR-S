@@ -75,7 +75,7 @@ const CheckTheDateOfSinger = () => {
   };
 
   const handleBack = () => {
-    navigate("/contact");
+    navigate("/singersPage");
   };
 
   const getMonthlyBookings = (snapshot, selectedDate) => {

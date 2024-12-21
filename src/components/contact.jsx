@@ -7,9 +7,116 @@ import {
   Search,
   Share2,
   Check,
+  Globe,
 } from "lucide-react";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
+
+const LanguageSelector = ({ onLanguageChange, translations }) => {
+  return (
+    <div className="relative group">
+      <button className="flex items-center gap-2 text-pink-600 hover:text-pink-700 transition-colors">
+        <Globe className="w-5 h-5" />
+        <span className="text-sm">Language</span>
+      </button>
+      <div className="absolute top-full left-0 mt-2 bg-white shadow-lg rounded-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+        {Object.keys(translations).map((lang) => (
+          <button
+            key={lang}
+            onClick={() => onLanguageChange(lang)}
+            className="block w-full px-4 py-2 text-left hover:bg-pink-50 transition-colors"
+          >
+            {lang === "ar" ? "العربية" : lang === "he" ? "עברית" : "English"}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+LanguageSelector.propTypes = {
+  onLanguageChange: PropTypes.func.isRequired,
+  translations: PropTypes.objectOf(PropTypes.objectOf(PropTypes.string))
+    .isRequired,
+};
+
+const useTranslations = () => {
+  const translations = {
+    ar: {
+      home: "الرئيسية",
+      halls: "القاعات",
+      singers: "المطربين",
+      contactUs: "تواصل معنا",
+      login: "تسجيل الدخول",
+      share: "مشاركة",
+      copied: "تم النسخ!",
+      title: "دليل قاعات الأفراح",
+      searchTitle: "ابحث عن قاعتك المثالية",
+      searchPlaceholder: "ابحث عن قاعة...",
+      allNames: "جميع الأسماء",
+      allCapacities: "جميع السعات",
+      capacity: "السعة",
+      guest: "ضيف",
+      features: "المميزات",
+      bookNow: "احجز الآن",
+      checkDate: "تحقق من التاريخ",
+      upTo500: "حتى 500 ضيف",
+      from500to800: "500 - 800 ضيف",
+      moreThan800: "أكثر من 800 ضيف",
+    },
+    he: {
+      home: "דף הבית",
+      halls: "אולמות",
+      singers: "זמרים",
+      contactUs: "צור קשר",
+      login: "התחברות",
+      share: "שתף",
+      copied: "הועתק!",
+      title: "מדריך אולמות אירועים",
+      searchTitle: "חפש את האולם האידיאלי שלך",
+      searchPlaceholder: "חפש אולם...",
+      allNames: "כל השמות",
+      allCapacities: "כל הקיבולות",
+      capacity: "קיבולת",
+      guest: "אורחים",
+      features: "מאפיינים",
+      bookNow: "הזמן עכשיו",
+      checkDate: "בדוק תאריך",
+      upTo500: "עד 500 אורחים",
+      from500to800: "500 - 800 אורחים",
+      moreThan800: "מעל 800 אורחים",
+    },
+    en: {
+      home: "Home",
+      halls: "Halls",
+      singers: "Singers",
+      contactUs: "Contact Us",
+      login: "Login",
+      share: "Share",
+      copied: "Copied!",
+      title: "Wedding Halls Guide",
+      searchTitle: "Find Your Perfect Hall",
+      searchPlaceholder: "Search for a hall...",
+      allNames: "All Names",
+      allCapacities: "All Capacities",
+      capacity: "Capacity",
+      guest: "guests",
+      features: "Features",
+      bookNow: "Book Now",
+      checkDate: "Check Date",
+      upTo500: "Up to 500 guests",
+      from500to800: "500 - 800 guests",
+      moreThan800: "More than 800 guests",
+    },
+  };
+
+  const [currentLang, setCurrentLang] = useState("ar");
+  const t = translations[currentLang];
+  const isRTL = currentLang === "ar" || currentLang === "he";
+
+  return { t, currentLang, setCurrentLang, isRTL, translations };
+};
 
 const HallsPage = () => {
   const navigate = useNavigate();
@@ -17,35 +124,17 @@ const HallsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedName, setSelectedName] = useState("all");
   const [selectedCapacity, setSelectedCapacity] = useState("all");
-  const [selectedMenuItem, setSelectedMenuItem] = useState("القاعات");
+  const [selectedMenuItem, setSelectedMenuItem] = useState("halls");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const { t, setCurrentLang, isRTL, translations } = useTranslations();
 
   const menuItems = [
-    { id: 1, name: "الرئيسية", icon: "🏠" },
-    { id: 2, name: "القاعات", icon: "🏰" },
-    { id: 3, name: "المطربين", icon: "🎤" },
-    { id: 4, name: "تواصل معنا", icon: "📞" },
+    { id: 1, name: "home", icon: "🏠" },
+    { id: 2, name: "halls", icon: "🏰" },
+    { id: 3, name: "singers", icon: "🎤" },
+    { id: 4, name: "contactUs", icon: "📞" },
   ];
-
-  const handleShareLink = async () => {
-    const url = window.location.href;
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: "دليل قاعات الأفراح",
-          text: "استكشف أفضل قاعات الأفراح في المنطقة",
-          url: url,
-        });
-      } else {
-        await navigator.clipboard.writeText(url);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      }
-    } catch (error) {
-      console.log("Error sharing:", error);
-    }
-  };
 
   useEffect(() => {
     const db = getDatabase();
@@ -79,20 +168,39 @@ const HallsPage = () => {
 
   const uniqueNames = [...new Set(weddingHalls.map((hall) => hall.name))];
 
+  const handleShareLink = async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: t.title,
+          text: t.searchTitle,
+          url: url,
+        });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch (error) {
+      console.log("Error sharing:", error);
+    }
+  };
+
   const handleMenuItemClick = (itemName) => {
     setSelectedMenuItem(itemName);
     setIsMobileMenuOpen(false);
     switch (itemName) {
-      case "الرئيسية":
+      case "home":
         navigate("/");
         break;
-      case "القاعات":
+      case "halls":
         navigate("/contact");
         break;
-      case "المطربين":
+      case "singers":
         navigate("/singersPage");
         break;
-      case "تواصل معنا":
+      case "contactUs":
         navigate("/CallUs");
         break;
     }
@@ -146,7 +254,7 @@ const HallsPage = () => {
 
   return (
     <div
-      dir="rtl"
+      dir={isRTL ? "rtl" : "ltr"}
       className="min-h-screen bg-gradient-to-b from-pink-50 to-white"
     >
       {/* Mobile Menu Button */}
@@ -159,17 +267,21 @@ const HallsPage = () => {
         </button>
       </div>
 
-      {/* Sidebar - Desktop and Mobile */}
+      {/* Sidebar */}
       <div
         className={`${
           isMobileMenuOpen
             ? "translate-x-0"
-            : "translate-x-full lg:translate-x-0"
-        } transition-transform duration-300 w-72 bg-white shadow-xl fixed right-0 h-full z-40 lg:z-30`}
+            : isRTL
+              ? "translate-x-full lg:translate-x-0"
+              : "-translate-x-full lg:translate-x-0"
+        } transition-transform duration-300 w-72 bg-white shadow-xl fixed ${
+          isRTL ? "right-0" : "left-0"
+        } h-full z-40 lg:z-30`}
       >
         <div className="h-24 bg-gradient-to-r from-pink-600 to-pink-500 flex items-center justify-center rounded-bl-3xl">
           <h1 className="text-white text-xl lg:text-2xl font-bold">
-            دليل قاعات الأفراح
+            {t.title}
           </h1>
         </div>
         <nav className="mt-8">
@@ -198,7 +310,7 @@ const HallsPage = () => {
                       : "text-gray-600"
                   }`}
                 >
-                  {item.name}
+                  {t[item.name]}
                 </span>
               </div>
             </div>
@@ -216,22 +328,34 @@ const HallsPage = () => {
                 <Share2 className="w-5 h-5 text-pink-600" />
               )}
               <span className="font-medium text-gray-600 group-hover:text-pink-600 transition-colors">
-                {copied ? "تم النسخ!" : "مشاركة"}
+                {copied ? t.copied : t.share}
               </span>
             </button>
+          </div>
+
+          {/* Language Selector */}
+          <div className="mx-4 mb-2 pt-4 border-t border-gray-200">
+            <div className="p-4">
+              <LanguageSelector
+                onLanguageChange={setCurrentLang}
+                translations={translations}
+              />
+            </div>
           </div>
         </nav>
       </div>
 
       {/* Main Content Area */}
-      <div className="lg:mr-72 transition-all duration-300">
+      <div
+        className={`${isRTL ? "lg:mr-72" : "lg:ml-72"} transition-all duration-300`}
+      >
         {/* Header */}
         <header className="h-24 bg-white shadow-lg flex items-center justify-end px-4 lg:px-8">
           <div
             onClick={handleLogin}
             className="flex items-center gap-3 text-pink-600 hover:text-pink-700 cursor-pointer group transition-all duration-300"
           >
-            <span className="text-base lg:text-lg">تسجيل الدخول</span>
+            <span className="text-base lg:text-lg">{t.login}</span>
             <LogIn className="w-5 h-5 transition-transform group-hover:translate-x-1" />
           </div>
         </header>
@@ -240,14 +364,14 @@ const HallsPage = () => {
         <div className="bg-white rounded-2xl shadow-xl p-6 lg:p-8 mb-8 lg:mb-12 transform hover:scale-[1.02] transition-transform duration-300">
           <div className="flex flex-col gap-6">
             <h2 className="text-2xl lg:text-3xl font-bold text-pink-900">
-              ابحث عن قاعتك المثالية
+              {t.searchTitle}
             </h2>
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder="ابحث عن قاعة..."
+                    placeholder={t.searchPlaceholder}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full px-4 py-3 pr-10 border rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500"
@@ -260,7 +384,7 @@ const HallsPage = () => {
                 onChange={(e) => setSelectedName(e.target.value)}
                 className="px-6 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white"
               >
-                <option value="all">جميع الأسماء</option>
+                <option value="all">{t.allNames}</option>
                 {uniqueNames.map((name, index) => (
                   <option key={index} value={name}>
                     {name}
@@ -272,17 +396,17 @@ const HallsPage = () => {
                 onChange={(e) => setSelectedCapacity(e.target.value)}
                 className="px-6 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white"
               >
-                <option value="all">جميع السعات</option>
-                <option value="small">حتى 500 ضيف</option>
-                <option value="medium">500 - 800 ضيف</option>
-                <option value="large">أكثر من 800 ضيف</option>
+                <option value="all">{t.allCapacities}</option>
+                <option value="small">{t.upTo500}</option>
+                <option value="medium">{t.from500to800}</option>
+                <option value="large">{t.moreThan800}</option>
               </select>
             </div>
             <button
               onClick={handleCheckDate}
               className="mt-4 px-6 py-3 bg-pink-600 text-white rounded-xl hover:bg-pink-700 transition-colors"
             >
-              تحقق من التاريخ
+              {t.checkDate}
             </button>
           </div>
         </div>
@@ -317,7 +441,7 @@ const HallsPage = () => {
                     <div className="flex items-center mb-2">
                       <Users className="w-5 h-5 text-pink-500 ml-2" />
                       <span className="text-sm lg:text-base">
-                        السعة: {hall.capacity} ضيف
+                        {t.capacity}: {hall.capacity} {t.guest}
                       </span>
                     </div>
                     <div className="flex items-center mb-2">
@@ -328,7 +452,7 @@ const HallsPage = () => {
                     </div>
                     <div className="mt-4">
                       <h4 className="font-semibold mb-2 text-sm lg:text-base">
-                        المميزات:
+                        {t.features}:
                       </h4>
                       <div className="flex flex-wrap gap-2">
                         {hall.features.map((feature, index) => (
@@ -378,7 +502,7 @@ const HallsPage = () => {
                     className="flex items-center gap-2 px-3 lg:px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors text-sm lg:text-base"
                   >
                     <Calendar className="w-4 h-4 lg:w-5 lg:h-5" />
-                    احجز الآن
+                    {t.bookNow}
                   </button>
                 </div>
               </div>
