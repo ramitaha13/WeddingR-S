@@ -92,7 +92,7 @@ const SingersPage = () => {
   const navigate = useNavigate();
   const [singers, setSingers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedMenuItem, setSelectedMenuItem] = useState("المطربين");
+  const [selectedMenuItem, setSelectedMenuItem] = useState("singers");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const { t, setCurrentLang, isRTL, translations } = useTranslations();
@@ -142,7 +142,7 @@ const SingersPage = () => {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: "דליל המטרבין",
+          title: "دليل المطربين",
           text: "استكشف أفضل المطربين في المنطقة",
           url: url,
         });
